@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?><plug-in>
+
+    <!-- Plugin Informations -->
+    <name>forms-documentproducer</name>
+    <class>fr.paris.lutece.plugins.forms.modules.documentproducer.service.FormsDocumentProducerPlugin</class>
+    <version>1.0.0-SNAPSHOT</version>
+    <documentation/>
+    <installation/>
+    <changes/>
+    <user-guide/>
+    <description/>
+    <provider/>
+    <provider-url>http://lutece.paris.fr</provider-url>
+    <icon-url>images/admin/skin/plugins/forms/modules/documentproducer/forms-documentproducer.png</icon-url>
+    <copyright>Copyright 2001-2011 Mairie de Paris</copyright>
+    <core-version-dependency>
+        <min-core-version>6.1.0</min-core-version>
+        <max-core-version/>
+    </core-version-dependency>
+    <db-pool-required>1</db-pool-required>
+    
+    <!-- RBAC Resources -->
+    <rbac-resource-types>
+        <rbac-resource-type>
+            <rbac-resource-type-class>
+                fr.paris.lutece.plugins.forms.modules.documentproducer.service.FormsDocumentProducerResourceIdService
+            </rbac-resource-type-class>
+        </rbac-resource-type>
+    </rbac-resource-types>
+    	
+</plug-in>

@@ -1,0 +1,59 @@
+<div class="row">
+  <div class="col-sm-12">
+    <div class="box box-primary">
+  		<div class="box-header">
+  			<h3 class="box-title">#i18n{module.forms.documentproducer.manage.producer.config.title}</h3>
+				<div class="box-tools">
+					<form method="post" action="jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp" class="form-inline pull-right">
+					<input type="hidden" name="view" value="getManageAdvancedParametersConfigProducer">
+					<button type="submit" class="btn btn-primary btn-xs btn-flat" >
+						<i class="fa fa-cog"></i>&nbsp;#i18n{module.forms.documentproducer.manage.producer.config.button.advanced.parameters}
+					</button>
+				</form>
+				<form method="post" action="jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp" class="form-inline pull-right spaced">
+					<input type="hidden" name="view" value="getCreateConfigProducer">
+					<button type="submit" class="btn btn-primary btn-xs btn-flat" >
+						<i class="fa fa-plus"></i>&nbsp;#i18n{module.forms.documentproducer.manage.producer.config.button.create}
+					</button>
+				</form>
+				</div>
+  		</div>
+  		<div class="box-body">
+				<#if config_list?has_content>
+				<table name="results_list" id="results_list"  class="table table-hover table-condensed">
+					<thead>
+						<tr>
+							<th>#i18n{module.forms.documentproducer.manage.producer.config.name}</th>
+							<th>#i18n{module.forms.documentproducer.manage.producer.config.type}</th>
+							<th>#i18n{module.forms.documentproducer.manage.producer.config.actions}</th>
+						</tr>
+					</thead>
+					<tbody>
+						<#list config_list as config>
+						<tr>
+							<td>${config.name}</td>
+							<td>${config.type}</td>
+							<td>
+								<a class="btn btn-danger btn-xs btn-flat" href="jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp?id_config_producer=${config.idProducerConfig}&view=getConfirmDeleteConfigProducer">
+									<i class="fa fa-trash"></i>
+								</a>
+								<a class="btn btn-primary btn-xs btn-flat" href="jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp?id_config_producer=${config.idProducerConfig}&view=getModifyConfigProducer">
+									<i class="fa fa-pencil"></i>
+								</a>
+								<a class="btn btn-primary btn-xs btn-flat" href="jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp?id_config_producer=${config.idProducerConfig}&action=doCreateCopyConfigProducer">
+									<i class="fa fa-copy"></i>
+								</a>
+							</td>
+						</tr>
+						</#list>
+					</tbody>
+			</table>
+		<#else>
+			<div class="callout callout-warning">
+				#i18n{module.forms.documentproducer.manage.producer.config.empty.list}
+			</div>
+		</#if>
+			</div>
+		</div>
+	</div>
+</div>
