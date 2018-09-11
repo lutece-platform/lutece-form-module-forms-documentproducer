@@ -117,10 +117,10 @@
                                                                     #i18n{${question.entry.entryType.title}}
                                                                 </td>
                                                                 <td>
-                                                                        <#if id_question_list?has_content && id_question_list?seq_contains(question.idEntry)>
-                                                                            <input type="checkbox" name="config_question" value="${question.idEntry}" checked="checked">
+                                                                        <#if id_question_list?has_content && id_question_list?seq_contains(question.id)>
+                                                                            <input type="checkbox" name="config_question" value="${question.id}" checked="checked">
                                                                         <#else>
-                                                                            <input type="checkbox" name="config_question" value="${question.idEntry}">
+                                                                            <input type="checkbox" name="config_question" value="${question.id}">
                                                                         </#if>
                                                                 </td>
                                                         </tr>

@@ -80,6 +80,8 @@ import fr.paris.lutece.plugins.forms.modules.documentproducer.business.producerc
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.util.string.StringUtil;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -463,9 +465,12 @@ public final class PDFUtils
         }
         if ( strTypeConfigFileName.equals( FORM_QUESTION_TYPE_FILE_NAME ) )
         {
-            FormQuestionResponse formQuestionResponse = FormQuestionResponseHome.findFormQuestionResponseByResponseQuestion( nIdRecord, configProducer.getIdQuestionFileName( ) );
+            List<FormQuestionResponse> listFormQuestionResponse = FormQuestionResponseHome.findFormQuestionResponseByResponseQuestion( nIdRecord, configProducer.getIdQuestionFileName( ) );
             
-            return formQuestionResponse.getEntryResponse().get( 0 ).getToStringValueResponse();
+            if(!CollectionUtils.isEmpty(listFormQuestionResponse))
+            {
+                return listFormQuestionResponse.get( 0 ).getEntryResponse( ).get( 0 ).getToStringValueResponse();
+            }
         }
         return null;
     }
