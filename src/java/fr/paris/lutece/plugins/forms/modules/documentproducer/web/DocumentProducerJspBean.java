@@ -245,13 +245,13 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
     {
         // Check if user is authorized and if selected questions are authorized
         checkAuthorized( _form );
-        List<Integer> listIdEntry = checkQuestionTypes( request, _form );
+        List<Integer> listIdQuestion = checkQuestionTypes( request, _form );
 
         populate( _configProducer, request );
 
         if ( validateBean( _configProducer, VALIDATION_ATTRIBUTES_PREFIX ) )
         {
-            _manageConfigProducerService.addNewConfig( getPlugin( ), _configProducer, listIdEntry );
+            _manageConfigProducerService.addNewConfig( getPlugin( ), _configProducer, listIdQuestion );
             addInfo( MESSAGE_CREATED_CONFIG, request.getLocale( ) );
             return redirectView( request, VIEW_MANAGE_CONFIG_PRODUCER );
         }

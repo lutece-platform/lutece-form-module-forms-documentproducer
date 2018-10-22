@@ -345,7 +345,7 @@ public final class PDFUtils
                 // Print the question
                 Question questionOfStep = QuestionHome.findByPrimaryKey( formQuestionResponseOfStep.getQuestion( ).getId( ) );
 
-                if ( listIdEntryConfig.isEmpty( ) || listIdEntryConfig.contains( questionOfStep.getIdEntry( ) ) )
+                if ( listIdEntryConfig.isEmpty( ) || listIdEntryConfig.contains( questionOfStep.getId( )) )
                 {
                     Font fontQuestionTitle = new Font( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_NAME, 0 ), AppPropertiesService.getPropertyInt(
                             PROPERTY_POLICE_SIZE_QUESTION, 0 ), AppPropertiesService.getPropertyInt( PROPERTY_POLICE_STYLE_QUESTION, 0 ) );
@@ -465,11 +465,12 @@ public final class PDFUtils
         }
         if ( strTypeConfigFileName.equals( FORM_QUESTION_TYPE_FILE_NAME ) )
         {
-            List<FormQuestionResponse> listFormQuestionResponse = FormQuestionResponseHome.findFormQuestionResponseByResponseQuestion( nIdRecord, configProducer.getIdQuestionFileName( ) );
+
+            FormQuestionResponse formQuestionResponse = FormQuestionResponseHome.findFormQuestionResponseByResponseQuestion( nIdRecord, configProducer.getIdQuestionFileName( ) ).get( 0 );
             
-            if(!CollectionUtils.isEmpty(listFormQuestionResponse))
+            if( formQuestionResponse != null )
             {
-                return listFormQuestionResponse.get( 0 ).getEntryResponse( ).get( 0 ).getToStringValueResponse();
+                return formQuestionResponse.getEntryResponse().get( 0 ).getResponseValue();
             }
         }
         return null;
