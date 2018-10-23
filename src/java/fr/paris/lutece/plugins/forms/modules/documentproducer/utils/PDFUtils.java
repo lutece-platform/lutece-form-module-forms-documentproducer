@@ -327,71 +327,90 @@ public final class PDFUtils
         for ( FormResponseStep formResponseStep : listFormResponseStep )
         {
             Step step = formResponseStep.getStep( );
-            Font fontStepTitle = new Font( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_NAME, 0 ), AppPropertiesService.getPropertyInt(
-                    PROPERTY_POLICE_SIZE_STEP, 0 ), Font.UNDERLINE );
-
-            Paragraph paragraphTitleStep = new Paragraph( new Phrase( step.getTitle( ), fontStepTitle ) );
-            paragraphTitleStep.setAlignment( Element.ALIGN_LEFT );
-            paragraphTitleStep.setIndentationLeft( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_MARGIN_LEFT_STEP, 0 ) );
-            paragraphTitleStep.setSpacingBefore( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_BEFORE_STEP, 0 ) );
-            paragraphTitleStep.setSpacingAfter( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_AFTER_STEP, 0 ) );
-
-            addElementToDocument( document, paragraphTitleStep );
-
             List<FormQuestionResponse> listFormQuestionResponseOfStep = FormQuestionResponseHome.findQuestionsByStepAndFormResponse( formResponse.getId( ) , step.getId());
-
-            for ( FormQuestionResponse formQuestionResponseOfStep : listFormQuestionResponseOfStep )
+            
+            if ( !listFormQuestionResponseOfStep.isEmpty()  )
             {
-                // Print the question
-                Question questionOfStep = QuestionHome.findByPrimaryKey( formQuestionResponseOfStep.getQuestion( ).getId( ) );
-
-                if ( listIdEntryConfig.isEmpty( ) || listIdEntryConfig.contains( questionOfStep.getId( )) )
+                boolean bPrintStep = false;
+                
+                for ( FormQuestionResponse formQuestionResponseOfStep : listFormQuestionResponseOfStep )
                 {
-                    Font fontQuestionTitle = new Font( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_NAME, 0 ), AppPropertiesService.getPropertyInt(
-                            PROPERTY_POLICE_SIZE_QUESTION, 0 ), AppPropertiesService.getPropertyInt( PROPERTY_POLICE_STYLE_QUESTION, 0 ) );
+                    // Print the question
+                    Question questionOfStep = QuestionHome.findByPrimaryKey( formQuestionResponseOfStep.getQuestion( ).getId( ) );
 
-                    Paragraph paragraphTitleQuestion = new Paragraph( new Phrase( questionOfStep.getTitle( ), fontQuestionTitle ) );
-                    paragraphTitleQuestion.setAlignment( Element.ALIGN_LEFT );
-                    paragraphTitleQuestion.setIndentationLeft( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_MARGIN_LEFT_QUESTION, 0 ) );
-                    paragraphTitleQuestion.setSpacingBefore( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_BEFORE_QUESTION, 0 ) );
-                    paragraphTitleQuestion.setSpacingAfter( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_AFTER_QUESTION, 0 ) );
-
-                    addElementToDocument( document, paragraphTitleQuestion );
-
-                    // Print the responses
-
-                    Font fontResponse = new Font( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_NAME, 0 ), AppPropertiesService.getPropertyInt(
-                            PROPERTY_POLICE_SIZE_RESPONSE, 0 ), AppPropertiesService.getPropertyInt( PROPERTY_POLICE_STYLE_RESPONSE, 0 ) );
-
-                    if ( formQuestionResponseOfStep.getEntryResponse( ).size( ) == 1 )
+                    if ( listIdEntryConfig.isEmpty( ) || listIdEntryConfig.contains( questionOfStep.getId( )) )
                     {
-                        // One element, build a paragraph
-                        Paragraph paragraphResponse = new Paragraph( new Phrase( formQuestionResponseOfStep.getEntryResponse( ).get( 0 )
-                                .getToStringValueResponse( ), fontResponse ) );
-                        paragraphResponse.setAlignment( Element.ALIGN_LEFT );
-                        paragraphResponse.setIndentationLeft( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_MARGIN_LEFT_RESPONSE, 0 ) );
-                        paragraphResponse.setSpacingBefore( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_BEFORE_RESPONSE, 0 ) );
-                        paragraphResponse.setSpacingAfter( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_AFTER_RESPONSE, 0 ) );
-
-                        addElementToDocument( document, paragraphResponse );
-                    }
-                    else
-                    {
-                        com.lowagie.text.List listValue = new com.lowagie.text.List( true );
-                        listValue.setPreSymbol( "- " );
-                        listValue.setNumbered( false );
-                        listValue.setIndentationLeft( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_MARGIN_LEFT_RESPONSE, 0 ) );
-
-                        // If many elements, build a list
-                        for ( Response response : formQuestionResponseOfStep.getEntryResponse( ) )
-                        {
-                            listValue.add( new ListItem( response.getToStringValueResponse( ), fontResponse ) );
-                        }
-
-                        addElementToDocument( document, listValue );
+                        bPrintStep = true;
                     }
                 }
+                
+                if ( bPrintStep )
+                {
+                    Font fontStepTitle = new Font( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_NAME, 0 ), AppPropertiesService.getPropertyInt(
+                    PROPERTY_POLICE_SIZE_STEP, 0 ), Font.UNDERLINE );
 
+                    Paragraph paragraphTitleStep = new Paragraph( new Phrase( step.getTitle( ), fontStepTitle ) );
+                    paragraphTitleStep.setAlignment( Element.ALIGN_LEFT );
+                    paragraphTitleStep.setIndentationLeft( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_MARGIN_LEFT_STEP, 0 ) );
+                    paragraphTitleStep.setSpacingBefore( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_BEFORE_STEP, 0 ) );
+                    paragraphTitleStep.setSpacingAfter( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_AFTER_STEP, 0 ) );
+
+                    addElementToDocument( document, paragraphTitleStep );
+                }
+                
+                for ( FormQuestionResponse formQuestionResponseOfStep : listFormQuestionResponseOfStep )
+                {
+                    // Print the question
+                    Question questionOfStep = QuestionHome.findByPrimaryKey( formQuestionResponseOfStep.getQuestion( ).getId( ) );
+
+                    if ( listIdEntryConfig.isEmpty( ) || listIdEntryConfig.contains( questionOfStep.getId( )) )
+                    {
+                        Font fontQuestionTitle = new Font( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_NAME, 0 ), AppPropertiesService.getPropertyInt(
+                                PROPERTY_POLICE_SIZE_QUESTION, 0 ), AppPropertiesService.getPropertyInt( PROPERTY_POLICE_STYLE_QUESTION, 0 ) );
+
+                        Paragraph paragraphTitleQuestion = new Paragraph( new Phrase( questionOfStep.getTitle( ), fontQuestionTitle ) );
+                        paragraphTitleQuestion.setAlignment( Element.ALIGN_LEFT );
+                        paragraphTitleQuestion.setIndentationLeft( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_MARGIN_LEFT_QUESTION, 0 ) );
+                        paragraphTitleQuestion.setSpacingBefore( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_BEFORE_QUESTION, 0 ) );
+                        paragraphTitleQuestion.setSpacingAfter( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_AFTER_QUESTION, 0 ) );
+
+                        addElementToDocument( document, paragraphTitleQuestion );
+
+                        // Print the responses
+
+                        Font fontResponse = new Font( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_NAME, 0 ), AppPropertiesService.getPropertyInt(
+                                PROPERTY_POLICE_SIZE_RESPONSE, 0 ), AppPropertiesService.getPropertyInt( PROPERTY_POLICE_STYLE_RESPONSE, 0 ) );
+
+                        if ( formQuestionResponseOfStep.getEntryResponse( ).size( ) == 1 )
+                        {
+                            // One element, build a paragraph
+                            Paragraph paragraphResponse = new Paragraph( new Phrase( formQuestionResponseOfStep.getEntryResponse( ).get( 0 )
+                                    .getToStringValueResponse( ), fontResponse ) );
+                            paragraphResponse.setAlignment( Element.ALIGN_LEFT );
+                            paragraphResponse.setIndentationLeft( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_MARGIN_LEFT_RESPONSE, 0 ) );
+                            paragraphResponse.setSpacingBefore( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_BEFORE_RESPONSE, 0 ) );
+                            paragraphResponse.setSpacingAfter( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_AFTER_RESPONSE, 0 ) );
+
+                            addElementToDocument( document, paragraphResponse );
+                        }
+                        else
+                        {
+                            com.lowagie.text.List listValue = new com.lowagie.text.List( true );
+                            listValue.setPreSymbol( "- " );
+                            listValue.setNumbered( false );
+                            listValue.setIndentationLeft( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_MARGIN_LEFT_RESPONSE, 0 ) );
+
+                            // If many elements, build a list
+                            for ( Response response : formQuestionResponseOfStep.getEntryResponse( ) )
+                            {
+                                listValue.add( new ListItem( response.getToStringValueResponse( ), fontResponse ) );
+                            }
+
+                            addElementToDocument( document, listValue );
+                        }
+                    }
+
+                }
             }
         }
     }
