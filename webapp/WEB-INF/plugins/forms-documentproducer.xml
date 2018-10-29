@@ -3,7 +3,7 @@
     <!-- Plugin Informations -->
     <name>forms-documentproducer</name>
     <class>fr.paris.lutece.plugins.forms.modules.documentproducer.service.FormsDocumentProducerPlugin</class>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <documentation/>
     <installation/>
     <changes/>
