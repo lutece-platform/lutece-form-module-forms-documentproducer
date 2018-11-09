@@ -75,13 +75,12 @@ import fr.paris.lutece.plugins.forms.business.FormResponseStepHome;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
-import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.modules.documentproducer.business.producerconfig.IConfigProducer;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.util.string.StringUtil;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -384,8 +383,8 @@ public final class PDFUtils
                         if ( formQuestionResponseOfStep.getEntryResponse( ).size( ) == 1 )
                         {
                             // One element, build a paragraph
-                            Paragraph paragraphResponse = new Paragraph( new Phrase( formQuestionResponseOfStep.getEntryResponse( ).get( 0 )
-                                    .getToStringValueResponse( ), fontResponse ) );
+                            String strValue= EntryTypeServiceManager.getEntryTypeService( questionOfStep.getEntry( ) ).getResponseValueForExport( questionOfStep.getEntry( ), null, formQuestionResponseOfStep.getEntryResponse( ).get( 0 ), Locale.FRENCH );
+                            Paragraph paragraphResponse = new Paragraph( new Phrase( strValue, fontResponse ) );
                             paragraphResponse.setAlignment( Element.ALIGN_LEFT );
                             paragraphResponse.setIndentationLeft( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_MARGIN_LEFT_RESPONSE, 0 ) );
                             paragraphResponse.setSpacingBefore( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_BEFORE_RESPONSE, 0 ) );
@@ -403,7 +402,8 @@ public final class PDFUtils
                             // If many elements, build a list
                             for ( Response response : formQuestionResponseOfStep.getEntryResponse( ) )
                             {
-                                listValue.add( new ListItem( response.getToStringValueResponse( ), fontResponse ) );
+                                String strValue= EntryTypeServiceManager.getEntryTypeService( questionOfStep.getEntry( ) ).getResponseValueForExport( questionOfStep.getEntry( ), null, response, Locale.FRENCH );
+                                listValue.add( new ListItem( strValue, fontResponse ) );
                             }
 
                             addElementToDocument( document, listValue );
