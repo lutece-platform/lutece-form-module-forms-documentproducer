@@ -383,7 +383,7 @@ public final class PDFUtils
                         if ( formQuestionResponseOfStep.getEntryResponse( ).size( ) == 1 )
                         {
                             // One element, build a paragraph
-                            String strValue= EntryTypeServiceManager.getEntryTypeService( questionOfStep.getEntry( ) ).getResponseValueForExport( questionOfStep.getEntry( ), null, formQuestionResponseOfStep.getEntryResponse( ).get( 0 ), Locale.FRENCH );
+                            String strValue= EntryTypeServiceManager.getEntryTypeService( questionOfStep.getEntry( ) ).getResponseValueForRecap( questionOfStep.getEntry( ), null, formQuestionResponseOfStep.getEntryResponse( ).get( 0 ), Locale.FRENCH );
                             Paragraph paragraphResponse = new Paragraph( new Phrase( strValue, fontResponse ) );
                             paragraphResponse.setAlignment( Element.ALIGN_LEFT );
                             paragraphResponse.setIndentationLeft( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_MARGIN_LEFT_RESPONSE, 0 ) );
@@ -402,7 +402,7 @@ public final class PDFUtils
                             // If many elements, build a list
                             for ( Response response : formQuestionResponseOfStep.getEntryResponse( ) )
                             {
-                                String strValue= EntryTypeServiceManager.getEntryTypeService( questionOfStep.getEntry( ) ).getResponseValueForExport( questionOfStep.getEntry( ), null, response, Locale.FRENCH );
+                                String strValue= EntryTypeServiceManager.getEntryTypeService( questionOfStep.getEntry( ) ).getResponseValueForRecap( questionOfStep.getEntry( ), null, response, Locale.FRENCH );
                                 listValue.add( new ListItem( strValue, fontResponse ) );
                             }
 
