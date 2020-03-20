@@ -77,7 +77,6 @@ import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.modules.documentproducer.business.producerconfig.IConfigProducer;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
-import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.util.string.StringUtil;
 import javax.servlet.http.HttpServletResponse;
 
@@ -88,7 +87,7 @@ import org.apache.commons.io.IOUtils;
  */
 public final class PDFUtils
 {
-    // PROPERTIES
+	// PROPERTIES
     private static final String PROPERTY_POLICE_NAME = "forms.pdfgenerate.font.name";
 
     // PORPERTIES DATE
@@ -129,6 +128,10 @@ public final class PDFUtils
     private static final String PROPERTY_IMAGE_ALIGN = "forms.pdfgenerate.image.align";
     private static final String PROPERTY_IMAGE_FITWIDTH = "forms.pdfgenerate.image.fitWidth";
     private static final String PROPERTY_IMAGE_FITHEIGHT = "forms.pdfgenerate.image.fitHeight";
+    
+    // PROPERTIES ENTRYTYPE
+    private static final String PROPERTY_ENTRYTYPE_GEOLOCALIZED_ID = "forms.pdfgenerate.entrytype.geolocalized.id";
+	private static final String PROPERTY_ENTRYTYPE_FIELD_TITLE_ADRESS = "forms.pdfgenerate.entrytype.field.title.adress";
 
     // CONSTANTS
     private static final String DEFAULT_TYPE_FILE_NAME = "default";
@@ -383,8 +386,8 @@ public final class PDFUtils
                         if ( formQuestionResponseOfStep.getEntryResponse( ).size( ) == 1 )
                         {
                             // One element, build a paragraph
-                            String strValue= EntryTypeServiceManager.getEntryTypeService( questionOfStep.getEntry( ) ).getResponseValueForRecap( questionOfStep.getEntry( ), null, formQuestionResponseOfStep.getEntryResponse( ).get( 0 ), Locale.FRENCH );
-                            Paragraph paragraphResponse = new Paragraph( new Phrase( strValue, fontResponse ) );
+                            Paragraph paragraphResponse = new Paragraph( new Phrase( formQuestionResponseOfStep.getEntryResponse( ).get( 0 )
+                                    .getToStringValueResponse( ), fontResponse ) );
                             paragraphResponse.setAlignment( Element.ALIGN_LEFT );
                             paragraphResponse.setIndentationLeft( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_MARGIN_LEFT_RESPONSE, 0 ) );
                             paragraphResponse.setSpacingBefore( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_BEFORE_RESPONSE, 0 ) );
@@ -402,8 +405,17 @@ public final class PDFUtils
                             // If many elements, build a list
                             for ( Response response : formQuestionResponseOfStep.getEntryResponse( ) )
                             {
-                                String strValue= EntryTypeServiceManager.getEntryTypeService( questionOfStep.getEntry( ) ).getResponseValueForRecap( questionOfStep.getEntry( ), null, response, Locale.FRENCH );
-                                listValue.add( new ListItem( strValue, fontResponse ) );
+                                if ( response.getEntry( ).getEntryType( ).getIdType( ) == AppPropertiesService.getPropertyInt( PROPERTY_ENTRYTYPE_GEOLOCALIZED_ID, 0 ) ) 
+                                {
+                                    if ( AppPropertiesService.getProperty( PROPERTY_ENTRYTYPE_FIELD_TITLE_ADRESS ).equals( response.getField().getTitle( ) ) ) 
+                                    {
+                                        listValue.add( new ListItem( response.getToStringValueResponse( ), fontResponse ) );
+                                        break;
+                                    }
+                                } else
+                                {
+                                    listValue.add( new ListItem( response.getToStringValueResponse( ), fontResponse ) );
+                                }
                             }
 
                             addElementToDocument( document, listValue );
