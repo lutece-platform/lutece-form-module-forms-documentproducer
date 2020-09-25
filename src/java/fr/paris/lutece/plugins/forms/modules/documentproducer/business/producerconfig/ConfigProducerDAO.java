@@ -61,7 +61,7 @@ public class ConfigProducerDAO implements IConfigProducerDAO
     private static final String SQL_QUERY_SELECT_QUESTION = "SELECT id_config, id_question FROM forms_config_question WHERE id_question = ? ;";
     private static final String PARAMETER_COPY_NAME = "module.forms.documentproducer.create.producer.config.copy.name";
     private static final String SQL_QUERY_SELECT_CONFIG_DEFAULT = "SELECT fcp.id_config, fcp.name, fcp.id_question_name_file, fcp.id_form, fcp.config_type, fcp.text_file_name, fcp.type_config_file_name,fcp.extract_empty FROM forms_default_config fdc LEFT JOIN forms_config_producer fcp ON fcp.id_config = fdc.id_config  WHERE fdc.id_form = ? AND fdc.config_type = ? ;";
-    private static final String SQL_QUERY_SELECT_CONFIG_DEFAULT_LIST = "SELECT fcp.id_config, fcp.name, fcp.id_question_name_file, fcp.id_form, fcp.config_type, fcp.text_file_name, fcp.type_config_file_name,fcp.extract_empty FROM forms_default_config fdc LEFT JOIN forms_config_producer fcp ON fcp.id_config = fdc.id_config  WHERE fdc.id_form = ? ;";;
+    private static final String SQL_QUERY_SELECT_CONFIG_DEFAULT_LIST = "SELECT fcp.id_config, fcp.name, fcp.id_question_name_file, fcp.id_form, fcp.config_type, fcp.text_file_name, fcp.type_config_file_name,fcp.extract_empty FROM forms_default_config fdc LEFT JOIN forms_config_producer fcp ON fcp.id_config = fdc.id_config  WHERE fdc.id_form = ? ;";
     private static final String SQL_QUERY_SAVE_CONFIG_DEFAULT = "INSERT INTO forms_default_config (id_config, id_form, config_type ) VALUES ( ? , ?, ? ) ;";
     private static final String SQL_QUERY_UPDATE_CONFIG_DEFAULT = "UPDATE forms_default_config SET id_config = ? WHERE id_form = ? AND config_type = ? ;";
     private static final String SQL_QUERY_DELETE_CONFIG_DEFAULT_BY_ID_FORM = "DELETE FROM forms_default_config WHERE id_form = ? ;";
@@ -72,42 +72,43 @@ public class ConfigProducerDAO implements IConfigProducerDAO
     @Override
     public void addNewConfig( Plugin plugin, ConfigProducer configProducer, List<Integer> listIdQuestion )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_MAX_ID, plugin );
-        daoUtil.executeQuery( );
-
         int nIdConfig = 1;
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_MAX_ID, plugin ) )
         {
-            nIdConfig = daoUtil.getInt( 1 ) + 1;
+            daoUtil.executeQuery( );
+    
+            if ( daoUtil.next( ) )
+            {
+                nIdConfig = daoUtil.getInt( 1 ) + 1;
+            }
+            configProducer.setIdProducerConfig( nIdConfig );
+
         }
-        configProducer.setIdProducerConfig( nIdConfig );
 
-        daoUtil.free( );
-
-        daoUtil = new DAOUtil( SQL_QUERY_INSERT_CONFIG_PRODUCER, plugin );
-        daoUtil.setInt( 1, nIdConfig );
-        daoUtil.setString( 2, configProducer.getName( ) );
-        daoUtil.setInt( 3, configProducer.getIdQuestionFileName( ) );
-        daoUtil.setInt( 4, configProducer.getIdForm( ) );
-        daoUtil.setString( 5, configProducer.getType( ) );
-        daoUtil.setString( 6, configProducer.getTextFileName( ) );
-        daoUtil.setString( 7, configProducer.getTypeConfigFileName( ) );
-        daoUtil.setBoolean( 8, configProducer.getExtractFilled( ) );
-
-        daoUtil.executeUpdate( );
-
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_CONFIG_PRODUCER, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdConfig );
+            daoUtil.setString( 2, configProducer.getName( ) );
+            daoUtil.setInt( 3, configProducer.getIdQuestionFileName( ) );
+            daoUtil.setInt( 4, configProducer.getIdForm( ) );
+            daoUtil.setString( 5, configProducer.getType( ) );
+            daoUtil.setString( 6, configProducer.getTextFileName( ) );
+            daoUtil.setString( 7, configProducer.getTypeConfigFileName( ) );
+            daoUtil.setBoolean( 8, configProducer.getExtractFilled( ) );
+    
+            daoUtil.executeUpdate( );
+        }
 
         if ( !listIdQuestion.isEmpty( ) )
         {
             for ( Integer idQuestion : listIdQuestion )
             {
-                daoUtil = new DAOUtil( SQL_QUERY_INSERT_CONFIG_QUESTION, plugin );
-                daoUtil.setInt( 1, nIdConfig );
-                daoUtil.setInt( 2, idQuestion.intValue( ) );
-                daoUtil.executeUpdate( );
-                daoUtil.free( );
+                try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_CONFIG_QUESTION, plugin ) )
+                {
+                    daoUtil.setInt( 1, nIdConfig );
+                    daoUtil.setInt( 2, idQuestion.intValue( ) );
+                    daoUtil.executeUpdate( );
+                }
             }
         }
     }
@@ -120,23 +121,23 @@ public class ConfigProducerDAO implements IConfigProducerDAO
     {
         ConfigProducer configProducer = new ConfigProducer( );
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_CONFIG, plugin );
-        daoUtil.setInt( 1, nIdConfig );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_CONFIG, plugin ) )
         {
-            configProducer.setIdProducerConfig( daoUtil.getInt( 1 ) );
-            configProducer.setName( daoUtil.getString( 2 ) );
-            configProducer.setIdQuestionFileName( daoUtil.getInt( 3 ) );
-            configProducer.setIdForm( daoUtil.getInt( 4 ) );
-            configProducer.setType( daoUtil.getString( 5 ) );
-            configProducer.setTextFileName( daoUtil.getString( 6 ) );
-            configProducer.setTypeConfigFileName( daoUtil.getString( 7 ) );
-            configProducer.setExtractFilled( daoUtil.getBoolean( 8 ) );
+            daoUtil.setInt( 1, nIdConfig );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                configProducer.setIdProducerConfig( daoUtil.getInt( 1 ) );
+                configProducer.setName( daoUtil.getString( 2 ) );
+                configProducer.setIdQuestionFileName( daoUtil.getInt( 3 ) );
+                configProducer.setIdForm( daoUtil.getInt( 4 ) );
+                configProducer.setType( daoUtil.getString( 5 ) );
+                configProducer.setTextFileName( daoUtil.getString( 6 ) );
+                configProducer.setTypeConfigFileName( daoUtil.getString( 7 ) );
+                configProducer.setExtractFilled( daoUtil.getBoolean( 8 ) );
+            }
         }
-
-        daoUtil.free( );
 
         return configProducer;
     }
@@ -147,26 +148,26 @@ public class ConfigProducerDAO implements IConfigProducerDAO
     @Override
     public List<ConfigProducer> loadListProducerConfig( Plugin plugin, int nIdForms )
     {
-        List<ConfigProducer> listProducerConfig = new ArrayList<ConfigProducer>( );
+        List<ConfigProducer> listProducerConfig = new ArrayList<>( );
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_CONFIG_BY_FORMS, plugin );
-        daoUtil.setInt( 1, nIdForms );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_CONFIG_BY_FORMS, plugin ) )
         {
-            ConfigProducer producerConfig = new ConfigProducer( );
-            producerConfig.setIdProducerConfig( daoUtil.getInt( 1 ) );
-            producerConfig.setName( daoUtil.getString( 2 ) );
-            producerConfig.setIdQuestionFileName( daoUtil.getInt( 3 ) );
-            producerConfig.setIdForm( nIdForms );
-            producerConfig.setType( daoUtil.getString( 5 ) );
-            producerConfig.setTextFileName( daoUtil.getString( 6 ) );
-            producerConfig.setTypeConfigFileName( daoUtil.getString( 7 ) );
-            listProducerConfig.add( producerConfig );
+            daoUtil.setInt( 1, nIdForms );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                ConfigProducer producerConfig = new ConfigProducer( );
+                producerConfig.setIdProducerConfig( daoUtil.getInt( 1 ) );
+                producerConfig.setName( daoUtil.getString( 2 ) );
+                producerConfig.setIdQuestionFileName( daoUtil.getInt( 3 ) );
+                producerConfig.setIdForm( nIdForms );
+                producerConfig.setType( daoUtil.getString( 5 ) );
+                producerConfig.setTextFileName( daoUtil.getString( 6 ) );
+                producerConfig.setTypeConfigFileName( daoUtil.getString( 7 ) );
+                listProducerConfig.add( producerConfig );
+            }
         }
-
-        daoUtil.free( );
 
         return listProducerConfig;
     }
@@ -177,18 +178,18 @@ public class ConfigProducerDAO implements IConfigProducerDAO
     @Override
     public List<Integer> loadListConfigQuestion( Plugin plugin, int nIdConfig )
     {
-        List<Integer> listIdQuestion = new ArrayList<Integer>( );
+        List<Integer> listIdQuestion = new ArrayList<>( );
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_CONFIG_QUESTION, plugin );
-        daoUtil.setInt( 1, nIdConfig );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_CONFIG_QUESTION, plugin ) )
         {
-            listIdQuestion.add( Integer.valueOf( daoUtil.getInt( 1 ) ) );
+            daoUtil.setInt( 1, nIdConfig );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                listIdQuestion.add( Integer.valueOf( daoUtil.getInt( 1 ) ) );
+            }
         }
-
-        daoUtil.free( );
 
         return listIdQuestion;
     }
@@ -199,16 +200,17 @@ public class ConfigProducerDAO implements IConfigProducerDAO
     @Override
     public void deleteProducerConfig( Plugin plugin, int nIdConfigProducer )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_CONFIG_PRODUCER, plugin );
-        daoUtil.setInt( 1, nIdConfigProducer );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_CONFIG_PRODUCER, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdConfigProducer );
+            daoUtil.executeUpdate( );
+        }
 
-        daoUtil = new DAOUtil( SQL_QUERY_DELETE_CONFIG_QUESTION, plugin );
-        daoUtil.setInt( 1, nIdConfigProducer );
-        daoUtil.executeUpdate( );
-
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_CONFIG_QUESTION, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdConfigProducer );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -217,34 +219,37 @@ public class ConfigProducerDAO implements IConfigProducerDAO
     @Override
     public void modifyProducerConfig( Plugin plugin, ConfigProducer configProducer, List<Integer> listIdQuestion )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_CONFIG_QUESTION, plugin );
-        daoUtil.setInt( 1, configProducer.getIdProducerConfig( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_CONFIG_QUESTION, plugin ) )
+        {
+            daoUtil.setInt( 1, configProducer.getIdProducerConfig( ) );
+            daoUtil.executeUpdate( );
+        }
 
         if ( !listIdQuestion.isEmpty( ) )
         {
             for ( Integer idQuestion : listIdQuestion )
             {
-                daoUtil = new DAOUtil( SQL_QUERY_INSERT_CONFIG_QUESTION, plugin );
-                daoUtil.setInt( 1, configProducer.getIdProducerConfig( ) );
-                daoUtil.setInt( 2, idQuestion.intValue( ) );
-                daoUtil.executeUpdate( );
-                daoUtil.free( );
+                try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_CONFIG_QUESTION, plugin ) )
+                {
+                    daoUtil.setInt( 1, configProducer.getIdProducerConfig( ) );
+                    daoUtil.setInt( 2, idQuestion.intValue( ) );
+                    daoUtil.executeUpdate( );
+                }
             }
         }
 
-        daoUtil = new DAOUtil( SQL_QUERY_UPDATE_CONFIG_QUESTION, plugin );
-        daoUtil.setString( 1, configProducer.getName( ) );
-        daoUtil.setInt( 2, configProducer.getIdQuestionFileName( ) );
-        daoUtil.setString( 3, configProducer.getType( ) );
-        daoUtil.setString( 4, configProducer.getTextFileName( ) );
-        daoUtil.setString( 5, configProducer.getTypeConfigFileName( ) );
-        daoUtil.setBoolean( 6, configProducer.getExtractFilled( ) );
-        daoUtil.setInt( 7, configProducer.getIdProducerConfig( ) );
-        daoUtil.executeUpdate( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE_CONFIG_QUESTION, plugin ) )
+        {
+            daoUtil.setString( 1, configProducer.getName( ) );
+            daoUtil.setInt( 2, configProducer.getIdQuestionFileName( ) );
+            daoUtil.setString( 3, configProducer.getType( ) );
+            daoUtil.setString( 4, configProducer.getTextFileName( ) );
+            daoUtil.setString( 5, configProducer.getTypeConfigFileName( ) );
+            daoUtil.setBoolean( 6, configProducer.getExtractFilled( ) );
+            daoUtil.setInt( 7, configProducer.getIdProducerConfig( ) );
+            daoUtil.executeUpdate( );
 
-        daoUtil.free( );
+        }
     }
 
     /**
@@ -253,27 +258,28 @@ public class ConfigProducerDAO implements IConfigProducerDAO
     @Override
     public void copyProducerConfig( Plugin plugin, int nIdConfig, Locale locale )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_CONFIG, plugin );
-        daoUtil.setInt( 1, nIdConfig );
-        daoUtil.executeQuery( );
-
-        List<Integer> listIdQuestion = loadListConfigQuestion( plugin, nIdConfig );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_CONFIG, plugin ) )
         {
-            ConfigProducer configProducer = new ConfigProducer( );
-            configProducer.setName( I18nService.getLocalizedString( PARAMETER_COPY_NAME, locale ) + " " + daoUtil.getString( 2 ) );
-            configProducer.setIdQuestionFileName( daoUtil.getInt( 3 ) );
-            configProducer.setIdForm( daoUtil.getInt( 4 ) );
-            configProducer.setType( daoUtil.getString( 5 ) );
-            configProducer.setTextFileName( daoUtil.getString( 6 ) );
-            configProducer.setTypeConfigFileName( daoUtil.getString( 7 ) );
-            configProducer.setExtractFilled( daoUtil.getBoolean( 8 ) );
+            daoUtil.setInt( 1, nIdConfig );
+            daoUtil.executeQuery( );
+    
+            List<Integer> listIdQuestion = loadListConfigQuestion( plugin, nIdConfig );
+    
+            while ( daoUtil.next( ) )
+            {
+                ConfigProducer configProducer = new ConfigProducer( );
+                configProducer.setName( I18nService.getLocalizedString( PARAMETER_COPY_NAME, locale ) + " " + daoUtil.getString( 2 ) );
+                configProducer.setIdQuestionFileName( daoUtil.getInt( 3 ) );
+                configProducer.setIdForm( daoUtil.getInt( 4 ) );
+                configProducer.setType( daoUtil.getString( 5 ) );
+                configProducer.setTextFileName( daoUtil.getString( 6 ) );
+                configProducer.setTypeConfigFileName( daoUtil.getString( 7 ) );
+                configProducer.setExtractFilled( daoUtil.getBoolean( 8 ) );
+    
+                addNewConfig( plugin, configProducer, listIdQuestion );
+            }
 
-            addNewConfig( plugin, configProducer, listIdQuestion );
         }
-
-        daoUtil.free( );
     }
 
     /**
@@ -282,24 +288,27 @@ public class ConfigProducerDAO implements IConfigProducerDAO
     @Override
     public void deleteByForm( Plugin plugin, int nIdForm )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_FORMS, plugin );
-        daoUtil.setInt( 1, nIdForm );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_FORMS, plugin ) )
         {
-            DAOUtil daoUtil2 = new DAOUtil( SQL_QUERY_DELETE_CONFIG_QUESTION, plugin );
-            daoUtil2.setInt( 1, daoUtil.getInt( 1 ) );
-            daoUtil2.executeUpdate( );
-            daoUtil2.free( );
+            daoUtil.setInt( 1, nIdForm );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                try ( DAOUtil daoUtil2 = new DAOUtil( SQL_QUERY_DELETE_CONFIG_QUESTION, plugin ) )
+                {
+                    daoUtil2.setInt( 1, daoUtil.getInt( 1 ) );
+                    daoUtil2.executeUpdate( );
+                }
+            }
+
         }
 
-        daoUtil.free( );
-
-        daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_FORMS, plugin );
-        daoUtil.setInt( 1, nIdForm );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_FORMS, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdForm );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -308,14 +317,12 @@ public class ConfigProducerDAO implements IConfigProducerDAO
     @Override
     public boolean checkQuestion( Plugin plugin, int nIdQuestion )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_QUESTION, plugin );
-        daoUtil.setInt( 1, nIdQuestion );
-        daoUtil.executeQuery( );
-
-        boolean bCheckQuestion = daoUtil.next( );
-        daoUtil.free( );
-
-        return bCheckQuestion;
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_QUESTION, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdQuestion );
+            daoUtil.executeQuery( );
+            return daoUtil.next( );
+        }
     }
 
     /**
@@ -325,24 +332,24 @@ public class ConfigProducerDAO implements IConfigProducerDAO
     public ConfigProducer loadDefaultConfig( Plugin plugin, int nIdForms, DocumentType docType )
     {
         ConfigProducer defaultConfigProducer = new ConfigProducer( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_CONFIG_DEFAULT, plugin );
-        daoUtil.setInt( 1, nIdForms );
-        daoUtil.setString( 2, docType.toString( ) );
-        daoUtil.executeQuery( );
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_CONFIG_DEFAULT, plugin ) )
         {
-            defaultConfigProducer.setIdProducerConfig( daoUtil.getInt( 1 ) );
-            defaultConfigProducer.setName( daoUtil.getString( 2 ) );
-            defaultConfigProducer.setIdQuestionFileName( daoUtil.getInt( 3 ) );
-            defaultConfigProducer.setIdForm( daoUtil.getInt( 4 ) );
-            defaultConfigProducer.setType( daoUtil.getString( 5 ) );
-            defaultConfigProducer.setTextFileName( daoUtil.getString( 6 ) );
-            defaultConfigProducer.setTypeConfigFileName( daoUtil.getString( 7 ) );
-            defaultConfigProducer.setExtractFilled( daoUtil.getBoolean( 8 ) );
+            daoUtil.setInt( 1, nIdForms );
+            daoUtil.setString( 2, docType.toString( ) );
+            daoUtil.executeQuery( );
+    
+            if ( daoUtil.next( ) )
+            {
+                defaultConfigProducer.setIdProducerConfig( daoUtil.getInt( 1 ) );
+                defaultConfigProducer.setName( daoUtil.getString( 2 ) );
+                defaultConfigProducer.setIdQuestionFileName( daoUtil.getInt( 3 ) );
+                defaultConfigProducer.setIdForm( daoUtil.getInt( 4 ) );
+                defaultConfigProducer.setType( daoUtil.getString( 5 ) );
+                defaultConfigProducer.setTextFileName( daoUtil.getString( 6 ) );
+                defaultConfigProducer.setTypeConfigFileName( daoUtil.getString( 7 ) );
+                defaultConfigProducer.setExtractFilled( daoUtil.getBoolean( 8 ) );
+            }
         }
-
-        daoUtil.free( );
 
         return defaultConfigProducer;
     }
@@ -355,24 +362,24 @@ public class ConfigProducerDAO implements IConfigProducerDAO
     {
         List<ConfigProducer> listProducerConfig = new ArrayList<>( );
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_CONFIG_DEFAULT_LIST, plugin );
-        daoUtil.setInt( 1, nIdForms );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_CONFIG_DEFAULT_LIST, plugin ) )
         {
-            ConfigProducer producerConfig = new ConfigProducer( );
-            producerConfig.setIdProducerConfig( daoUtil.getInt( 1 ) );
-            producerConfig.setName( daoUtil.getString( 2 ) );
-            producerConfig.setIdQuestionFileName( daoUtil.getInt( 3 ) );
-            producerConfig.setIdForm( nIdForms );
-            producerConfig.setType( daoUtil.getString( 5 ) );
-            producerConfig.setTextFileName( daoUtil.getString( 6 ) );
-            producerConfig.setTypeConfigFileName( daoUtil.getString( 7 ) );
-            listProducerConfig.add( producerConfig );
+            daoUtil.setInt( 1, nIdForms );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                ConfigProducer producerConfig = new ConfigProducer( );
+                producerConfig.setIdProducerConfig( daoUtil.getInt( 1 ) );
+                producerConfig.setName( daoUtil.getString( 2 ) );
+                producerConfig.setIdQuestionFileName( daoUtil.getInt( 3 ) );
+                producerConfig.setIdForm( nIdForms );
+                producerConfig.setType( daoUtil.getString( 5 ) );
+                producerConfig.setTextFileName( daoUtil.getString( 6 ) );
+                producerConfig.setTypeConfigFileName( daoUtil.getString( 7 ) );
+                listProducerConfig.add( producerConfig );
+            }
         }
-
-        daoUtil.free( );
 
         return listProducerConfig;
     }
@@ -383,12 +390,13 @@ public class ConfigProducerDAO implements IConfigProducerDAO
     @Override
     public void createDefaultConfig( Plugin plugin, int nIdForms, int nIdConfig, DocumentType docType )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SAVE_CONFIG_DEFAULT, plugin );
-        daoUtil.setInt( 1, nIdConfig );
-        daoUtil.setInt( 2, nIdForms );
-        daoUtil.setString( 3, docType.toString( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SAVE_CONFIG_DEFAULT, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdConfig );
+            daoUtil.setInt( 2, nIdForms );
+            daoUtil.setString( 3, docType.toString( ) );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -397,12 +405,13 @@ public class ConfigProducerDAO implements IConfigProducerDAO
     @Override
     public void updateDefaultConfig( Plugin plugin, int nIdForms, int nIdConfig, DocumentType docType )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE_CONFIG_DEFAULT, plugin );
-        daoUtil.setInt( 1, nIdConfig );
-        daoUtil.setInt( 2, nIdForms );
-        daoUtil.setString( 3, docType.toString( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE_CONFIG_DEFAULT, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdConfig );
+            daoUtil.setInt( 2, nIdForms );
+            daoUtil.setString( 3, docType.toString( ) );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -411,10 +420,11 @@ public class ConfigProducerDAO implements IConfigProducerDAO
     @Override
     public void removeAllDefaultConfigOfForm( Plugin plugin, int nIdForm )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_CONFIG_DEFAULT_BY_ID_FORM, plugin );
-        daoUtil.setInt( 1, nIdForm );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_CONFIG_DEFAULT_BY_ID_FORM, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdForm );
+            daoUtil.executeUpdate( );
+        }
     }
 
 }
