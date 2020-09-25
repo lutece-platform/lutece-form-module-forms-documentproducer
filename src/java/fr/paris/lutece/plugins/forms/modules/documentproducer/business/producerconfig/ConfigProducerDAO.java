@@ -81,6 +81,7 @@ public class ConfigProducerDAO implements IConfigProducerDAO
         {
             nIdConfig = daoUtil.getInt( 1 ) + 1;
         }
+        configProducer.setIdProducerConfig( nIdConfig );
 
         daoUtil.free( );
 
