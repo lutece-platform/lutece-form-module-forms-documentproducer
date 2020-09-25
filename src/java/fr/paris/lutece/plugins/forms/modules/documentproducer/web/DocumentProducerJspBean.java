@@ -77,6 +77,8 @@ import java.util.stream.Collectors;
 @Controller( controllerJsp = "ManageConfigProducer.jsp", controllerPath = "jsp/admin/plugins/forms/modules/documentproducer/", right = "CONFIG_DOCUMENT_PRODUCER_MANAGEMENT" )
 public class DocumentProducerJspBean extends MVCAdminJspBean
 {
+    private static final long serialVersionUID = 3282947925371998656L;
+
     // RIGHT
     public static final String RIGHT_MANAGE_CONFIG_PRODUCER = "CONFIG_DOCUMENT_PRODUCER_MANAGEMENT";
 
@@ -149,7 +151,7 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
     Form _form;
 
     @View( value = VIEW_SELECT_FORM, defaultView = true )
-    public String getSelectForm( HttpServletRequest request ) throws AccessDeniedException
+    public String getSelectForm( HttpServletRequest request ) 
     {
         String strIdForm = request.getParameter( PARAMETER_ID_FORM );
 
@@ -387,7 +389,7 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
         {
             Collection<String> listStrIdQuestion = Arrays.asList( request.getParameterValues( PARAMETER_CONFIG_QUESTION ) );
             List<String> listStrIdAuthorizedQuestion = getTextAndNumQuestion( QuestionHome.getListQuestionByIdForm( form.getId( ) ) ).stream( )
-                    .map( question -> question.getId( ) ).map( id -> String.valueOf( id ) ).collect( Collectors.toList( ) );
+                    .map( Question::getId ).map( String::valueOf ).collect( Collectors.toList( ) );
 
             if ( !listStrIdAuthorizedQuestion.containsAll( listStrIdQuestion ) )
             {
@@ -395,7 +397,7 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
             }
             else
             {
-                return listStrIdQuestion.stream( ).map( strIdQuestion -> Integer.parseInt( strIdQuestion ) ).collect( Collectors.toList( ) );
+                return listStrIdQuestion.stream( ).map( Integer::parseInt ).collect( Collectors.toList( ) );
             }
         }
         return new ArrayList( );
@@ -435,7 +437,7 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
                 defaultValues.put( docType.toString( ), String.valueOf( defaultConfigDocType.get( ).getIdProducerConfig( ) ) );
             }
 
-            listConfigProducer.stream( ).filter( config -> config.getType( ).equals( docType.toString( ) ) ).forEach( conf -> {
+            listConfigProducer.stream( ).filter( config -> config.getType( ).equals( docType.toString( ) ) ).forEach( ( ConfigProducer conf ) -> {
                 ReferenceItem item = new ReferenceItem( );
                 item.setCode( String.valueOf( conf.getIdProducerConfig( ) ) );
                 item.setName( String.valueOf( conf.getName( ) ) );
@@ -547,12 +549,9 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
     protected void populate( Object bean, HttpServletRequest request )
     {
         super.populate( bean, request );
-        if ( bean instanceof ConfigProducer )
+        if ( bean instanceof ConfigProducer && _form != null && _form.getId( ) > 0 )
         {
-            if ( _form != null && _form.getId( ) > 0 )
-            {
-                ( (ConfigProducer) bean ).setIdForm( _form.getId( ) );
-            }
+            ( (ConfigProducer) bean ).setIdForm( _form.getId( ) );
         }
     }
 

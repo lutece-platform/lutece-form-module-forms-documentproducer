@@ -33,11 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.modules.documentproducer.utils;
 
-import fr.paris.lutece.plugins.forms.service.FormsPlugin;
-import fr.paris.lutece.portal.business.user.AdminUser;
-import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -53,7 +49,6 @@ import java.util.Locale;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
-import com.lowagie.text.BadElementException;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
@@ -81,7 +76,7 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServ
 import fr.paris.lutece.util.string.StringUtil;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * class for generate PDF document from forms records
@@ -105,7 +100,6 @@ public final class PDFUtils
 
     // PROPERTIES STEPS
     private static final String PROPERTY_POLICE_SIZE_STEP = "forms.pdfgenerate.font.size.step";
-    private static final String PROPERTY_POLICE_STYLE_STEP = "forms.pdfgenerate.font.style.step";
     private static final String PROPERTY_POLICE_MARGIN_LEFT_STEP = "forms.pdfgenerate.margin.left.step";
     private static final String PROPERTY_POLICE_SPACING_BEFORE_STEP = "forms.pdfgenerate.font.spacing_before.step";
     private static final String PROPERTY_POLICE_SPACING_AFTER_STEP = "forms.pdfgenerate.font.spacing_after.step";
@@ -143,73 +137,18 @@ public final class PDFUtils
     }
 
     /**
-     * method to create PDF without config
-     * 
-     * @param request
-     *            request
-     * @param strNameFile
-     *            PDF name
-     * @param out
-     *            OutputStream
-     * @param nIdRecord
-     *            the id record
-     * @param bExtractNotFilledField
-     *            if true, extract empty fields, false otherwise
-     */
-    public static void doCreateDocumentPDF( HttpServletRequest request, String strNameFile, OutputStream out, int nIdRecord, Boolean bExtractNotFilledField )
-    {
-        List<Integer> listIdEntryConfig = new ArrayList<Integer>( );
-        doCreateDocumentPDF( request, strNameFile, out, nIdRecord, listIdEntryConfig, bExtractNotFilledField );
-    }
-
-    /**
      * method to create PDF
      * 
-     * @param request
-     *            request
-     * @param strNameFile
-     *            PDF name
-     * @param out
-     *            OutputStream
-     * @param nIdRecord
-     *            the id record
-     * @param listIdEntryConfig
-     *            list of config id entry
-     * @param bExtractNotFilledField
-     *            if true, extract empty fields, false otherwise
-     */
-    public static void doCreateDocumentPDF( HttpServletRequest request, String strNameFile, OutputStream out, int nIdRecord, List<Integer> listIdEntryConfig,
-            Boolean bExtractNotFilledField )
-    {
-        AdminUser adminUser = AdminUserService.getAdminUser( request );
-        Locale locale = request.getLocale( );
-        doCreateDocumentPDF( adminUser, locale, strNameFile, out, nIdRecord, listIdEntryConfig, bExtractNotFilledField );
-    }
-
-    /**
-     * method to create PDF
-     * 
-     * @param adminUser
-     *            The admin user
-     * @param locale
-     *            The locale
-     * @param strNameFile
-     *            PDF name
      * @param out
      *            OutputStream
      * @param nIdFormResponse
      *            the id of the form response
      * @param listIdEntryConfig
      *            list of config id entry
-     * @param bExtractFilledField
-     *            if true, extract only filled fields, false
      */
-    public static void doCreateDocumentPDF( AdminUser adminUser, Locale locale, String strNameFile, OutputStream out, int nIdFormResponse,
-            List<Integer> listIdEntryConfig, Boolean bExtractFilledField )
+    private static void doCreateDocumentPDF( OutputStream out, int nIdFormResponse, List<Integer> listIdEntryConfig )
     {
         Document document = new Document( PageSize.A4 );
-
-        Plugin plugin = PluginService.getPlugin( FormsPlugin.PLUGIN_NAME );
 
         FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
         Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
@@ -246,41 +185,32 @@ public final class PDFUtils
             }
         }
 
-        Image image;
+        float fitWidth;
+        float fitHeight;
 
         try
         {
+            fitWidth = Float.parseFloat( AppPropertiesService.getProperty( PROPERTY_IMAGE_FITWIDTH ) );
+            fitHeight = Float.parseFloat( AppPropertiesService.getProperty( PROPERTY_IMAGE_FITHEIGHT ) );
+        }
+        catch( NumberFormatException e )
+        {
+            fitWidth = 100f;
+            fitHeight = 100f;
+        }
+        
+        try
+        {
 
-            image = Image.getInstance(
+            Image image = Image.getInstance(
                     ImageIO.read( new File( AppPathService.getAbsolutePathFromRelativePath( AppPropertiesService.getProperty( PROPERTY_IMAGE_URL ) ) ) ),
                     null );
             image.setAlignment( AppPropertiesService.getPropertyInt( PROPERTY_IMAGE_ALIGN, 0 ) );
-            float fitWidth;
-            float fitHeight;
-
-            try
-            {
-                fitWidth = Float.parseFloat( AppPropertiesService.getProperty( PROPERTY_IMAGE_FITWIDTH ) );
-                fitHeight = Float.parseFloat( AppPropertiesService.getProperty( PROPERTY_IMAGE_FITHEIGHT ) );
-            }
-            catch( NumberFormatException e )
-            {
-                fitWidth = 100f;
-                fitHeight = 100f;
-            }
-
             image.scaleToFit( fitWidth, fitHeight );
 
-            try
-            {
-                document.add( image );
-            }
-            catch( DocumentException e )
-            {
-                AppLogService.error( e );
-            }
+            document.add( image );
         }
-        catch( BadElementException | IOException e )
+        catch( IOException | DocumentException e )
         {
             AppLogService.error( e );
         }
@@ -298,7 +228,7 @@ public final class PDFUtils
 
         addElementToDocument( document, paragraphHeader );
 
-        builderPDFWithFormQuestionResponse( document, formResponse, listIdEntryConfig, bExtractFilledField );
+        builderPDFWithFormQuestionResponse( document, formResponse, listIdEntryConfig );
         document.close( );
     }
 
@@ -317,11 +247,8 @@ public final class PDFUtils
      *            list of config id entry
      * @param locale
      *            the locale
-     * @param bExtractNotFilledField
-     *            if true, extract empty fields, false
      */
-    private static void builderPDFWithFormQuestionResponse( Document document, FormResponse formResponse, List<Integer> listIdEntryConfig,
-            boolean bExtractFilled )
+    private static void builderPDFWithFormQuestionResponse( Document document, FormResponse formResponse, List<Integer> listIdEntryConfig )
     {
         List<FormResponseStep> listFormResponseStep = FormResponseStepHome.findStepsByFormResponse( formResponse.getId( ) );
 
@@ -330,94 +257,96 @@ public final class PDFUtils
             Step step = formResponseStep.getStep( );
             List<FormQuestionResponse> listFormQuestionResponseOfStep = FormQuestionResponseHome.findQuestionsByStepAndFormResponse( formResponse.getId( ),
                     step.getId( ) );
-
-            if ( !listFormQuestionResponseOfStep.isEmpty( ) )
+            
+            if ( CollectionUtils.isEmpty( listFormQuestionResponseOfStep ) )
             {
-                boolean bPrintStep = false;
+                continue;
+            }
 
-                for ( FormQuestionResponse formQuestionResponseOfStep : listFormQuestionResponseOfStep )
+            boolean bPrintStep = false;
+
+            for ( FormQuestionResponse formQuestionResponseOfStep : listFormQuestionResponseOfStep )
+            {
+                // Print the question
+                Question questionOfStep = QuestionHome.findByPrimaryKey( formQuestionResponseOfStep.getQuestion( ).getId( ) );
+
+                if ( listIdEntryConfig.isEmpty( ) || listIdEntryConfig.contains( questionOfStep.getId( ) ) )
                 {
-                    // Print the question
-                    Question questionOfStep = QuestionHome.findByPrimaryKey( formQuestionResponseOfStep.getQuestion( ).getId( ) );
+                    bPrintStep = true;
+                }
+            }
 
-                    if ( listIdEntryConfig.isEmpty( ) || listIdEntryConfig.contains( questionOfStep.getId( ) ) )
+            if ( bPrintStep )
+            {
+                Font fontStepTitle = new Font( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_NAME, 0 ),
+                        AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SIZE_STEP, 0 ), Font.UNDERLINE );
+
+                Paragraph paragraphTitleStep = new Paragraph( new Phrase( step.getTitle( ), fontStepTitle ) );
+                paragraphTitleStep.setAlignment( Element.ALIGN_LEFT );
+                paragraphTitleStep.setIndentationLeft( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_MARGIN_LEFT_STEP, 0 ) );
+                paragraphTitleStep.setSpacingBefore( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_BEFORE_STEP, 0 ) );
+                paragraphTitleStep.setSpacingAfter( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_AFTER_STEP, 0 ) );
+
+                addElementToDocument( document, paragraphTitleStep );
+            }
+
+            for ( FormQuestionResponse formQuestionResponseOfStep : listFormQuestionResponseOfStep )
+            {
+                // Print the question
+                Question questionOfStep = QuestionHome.findByPrimaryKey( formQuestionResponseOfStep.getQuestion( ).getId( ) );
+
+                if ( listIdEntryConfig.isEmpty( ) || listIdEntryConfig.contains( questionOfStep.getId( ) ) )
+                {
+                    Font fontQuestionTitle = new Font( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_NAME, 0 ),
+                            AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SIZE_QUESTION, 0 ),
+                            AppPropertiesService.getPropertyInt( PROPERTY_POLICE_STYLE_QUESTION, 0 ) );
+
+                    Paragraph paragraphTitleQuestion = new Paragraph( new Phrase( questionOfStep.getTitle( ), fontQuestionTitle ) );
+                    paragraphTitleQuestion.setAlignment( Element.ALIGN_LEFT );
+                    paragraphTitleQuestion.setIndentationLeft( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_MARGIN_LEFT_QUESTION, 0 ) );
+                    paragraphTitleQuestion.setSpacingBefore( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_BEFORE_QUESTION, 0 ) );
+                    paragraphTitleQuestion.setSpacingAfter( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_AFTER_QUESTION, 0 ) );
+
+                    addElementToDocument( document, paragraphTitleQuestion );
+
+                    // Print the responses
+
+                    Font fontResponse = new Font( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_NAME, 0 ),
+                            AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SIZE_RESPONSE, 0 ),
+                            AppPropertiesService.getPropertyInt( PROPERTY_POLICE_STYLE_RESPONSE, 0 ) );
+
+                    if ( formQuestionResponseOfStep.getEntryResponse( ).size( ) == 1 )
                     {
-                        bPrintStep = true;
+                        // One element, build a paragraph
+                        String strValue = EntryTypeServiceManager.getEntryTypeService( questionOfStep.getEntry( ) ).getResponseValueForRecap(
+                                questionOfStep.getEntry( ), null, formQuestionResponseOfStep.getEntryResponse( ).get( 0 ), Locale.FRENCH );
+                        Paragraph paragraphResponse = new Paragraph( new Phrase( strValue, fontResponse ) );
+                        paragraphResponse.setAlignment( Element.ALIGN_LEFT );
+                        paragraphResponse.setIndentationLeft( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_MARGIN_LEFT_RESPONSE, 0 ) );
+                        paragraphResponse.setSpacingBefore( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_BEFORE_RESPONSE, 0 ) );
+                        paragraphResponse.setSpacingAfter( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_AFTER_RESPONSE, 0 ) );
+
+                        addElementToDocument( document, paragraphResponse );
+                    }
+                    else
+                    {
+                        com.lowagie.text.List listValue = new com.lowagie.text.List( true );
+                        listValue.setPreSymbol( "- " );
+                        listValue.setNumbered( false );
+                        listValue.setIndentationLeft( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_MARGIN_LEFT_RESPONSE, 0 ) );
+
+                        // If many elements, build a list
+                        for ( Response response : formQuestionResponseOfStep.getEntryResponse( ) )
+                        {
+                            String strValue = EntryTypeServiceManager.getEntryTypeService( questionOfStep.getEntry( ) )
+                                    .getResponseValueForRecap( questionOfStep.getEntry( ), null, response, Locale.FRENCH );
+                            listValue.add( new ListItem( strValue, fontResponse ) );
+                        }
+
+                        addElementToDocument( document, listValue );
                     }
                 }
 
-                if ( bPrintStep )
-                {
-                    Font fontStepTitle = new Font( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_NAME, 0 ),
-                            AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SIZE_STEP, 0 ), Font.UNDERLINE );
-
-                    Paragraph paragraphTitleStep = new Paragraph( new Phrase( step.getTitle( ), fontStepTitle ) );
-                    paragraphTitleStep.setAlignment( Element.ALIGN_LEFT );
-                    paragraphTitleStep.setIndentationLeft( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_MARGIN_LEFT_STEP, 0 ) );
-                    paragraphTitleStep.setSpacingBefore( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_BEFORE_STEP, 0 ) );
-                    paragraphTitleStep.setSpacingAfter( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_AFTER_STEP, 0 ) );
-
-                    addElementToDocument( document, paragraphTitleStep );
-                }
-
-                for ( FormQuestionResponse formQuestionResponseOfStep : listFormQuestionResponseOfStep )
-                {
-                    // Print the question
-                    Question questionOfStep = QuestionHome.findByPrimaryKey( formQuestionResponseOfStep.getQuestion( ).getId( ) );
-
-                    if ( listIdEntryConfig.isEmpty( ) || listIdEntryConfig.contains( questionOfStep.getId( ) ) )
-                    {
-                        Font fontQuestionTitle = new Font( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_NAME, 0 ),
-                                AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SIZE_QUESTION, 0 ),
-                                AppPropertiesService.getPropertyInt( PROPERTY_POLICE_STYLE_QUESTION, 0 ) );
-
-                        Paragraph paragraphTitleQuestion = new Paragraph( new Phrase( questionOfStep.getTitle( ), fontQuestionTitle ) );
-                        paragraphTitleQuestion.setAlignment( Element.ALIGN_LEFT );
-                        paragraphTitleQuestion.setIndentationLeft( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_MARGIN_LEFT_QUESTION, 0 ) );
-                        paragraphTitleQuestion.setSpacingBefore( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_BEFORE_QUESTION, 0 ) );
-                        paragraphTitleQuestion.setSpacingAfter( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_AFTER_QUESTION, 0 ) );
-
-                        addElementToDocument( document, paragraphTitleQuestion );
-
-                        // Print the responses
-
-                        Font fontResponse = new Font( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_NAME, 0 ),
-                                AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SIZE_RESPONSE, 0 ),
-                                AppPropertiesService.getPropertyInt( PROPERTY_POLICE_STYLE_RESPONSE, 0 ) );
-
-                        if ( formQuestionResponseOfStep.getEntryResponse( ).size( ) == 1 )
-                        {
-                            // One element, build a paragraph
-                            String strValue = EntryTypeServiceManager.getEntryTypeService( questionOfStep.getEntry( ) ).getResponseValueForRecap(
-                                    questionOfStep.getEntry( ), null, formQuestionResponseOfStep.getEntryResponse( ).get( 0 ), Locale.FRENCH );
-                            Paragraph paragraphResponse = new Paragraph( new Phrase( strValue, fontResponse ) );
-                            paragraphResponse.setAlignment( Element.ALIGN_LEFT );
-                            paragraphResponse.setIndentationLeft( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_MARGIN_LEFT_RESPONSE, 0 ) );
-                            paragraphResponse.setSpacingBefore( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_BEFORE_RESPONSE, 0 ) );
-                            paragraphResponse.setSpacingAfter( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SPACING_AFTER_RESPONSE, 0 ) );
-
-                            addElementToDocument( document, paragraphResponse );
-                        }
-                        else
-                        {
-                            com.lowagie.text.List listValue = new com.lowagie.text.List( true );
-                            listValue.setPreSymbol( "- " );
-                            listValue.setNumbered( false );
-                            listValue.setIndentationLeft( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_MARGIN_LEFT_RESPONSE, 0 ) );
-
-                            // If many elements, build a list
-                            for ( Response response : formQuestionResponseOfStep.getEntryResponse( ) )
-                            {
-                                String strValue = EntryTypeServiceManager.getEntryTypeService( questionOfStep.getEntry( ) )
-                                        .getResponseValueForRecap( questionOfStep.getEntry( ), null, response, Locale.FRENCH );
-                                listValue.add( new ListItem( strValue, fontResponse ) );
-                            }
-
-                            addElementToDocument( document, listValue );
-                        }
-                    }
-
-                }
             }
         }
     }
@@ -443,7 +372,7 @@ public final class PDFUtils
         FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
         Form forms = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
 
-        String strName = getFileNameFromConfig( forms, configProducer, nIdFormResponse, locale );
+        String strName = getFileNameFromConfig( forms, configProducer, nIdFormResponse );
         String strFileName = doPurgeNameFile( strName ) + ".pdf";
 
         response.setHeader( "Content-Disposition", "attachment ;filename=\"" + strFileName + "\"" );
@@ -453,32 +382,21 @@ public final class PDFUtils
 
         response.setContentType( "application/pdf" );
 
-        OutputStream os = null;
-
-        try
+        try ( OutputStream os = response.getOutputStream( ) )
         {
-            os = response.getOutputStream( );
-
-            if ( listIdQuestionConfig != null )
+            if ( listIdQuestionConfig == null )
             {
-                doCreateDocumentPDF( request, strName, os, nIdFormResponse, listIdQuestionConfig, configProducer.getExtractFilled( ) );
+                listIdQuestionConfig = new ArrayList<>( );
             }
-            else
-            {
-                doCreateDocumentPDF( request, strName, os, nIdFormResponse, configProducer.getExtractFilled( ) );
-            }
+            doCreateDocumentPDF( os, nIdFormResponse, listIdQuestionConfig );
         }
         catch( IOException e )
         {
             AppLogService.error( e );
         }
-        finally
-        {
-            IOUtils.closeQuietly( os );
-        }
     }
 
-    public static String getFileNameFromConfig( Form form, IConfigProducer configProducer, int nIdRecord, Locale locale )
+    private static String getFileNameFromConfig( Form form, IConfigProducer configProducer, int nIdRecord )
     {
         String strTypeConfigFileName = configProducer.getTypeConfigFileName( );
         if ( strTypeConfigFileName.equals( DEFAULT_TYPE_FILE_NAME ) )

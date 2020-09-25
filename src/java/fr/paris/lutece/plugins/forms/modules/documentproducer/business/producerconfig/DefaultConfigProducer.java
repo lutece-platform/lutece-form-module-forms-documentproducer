@@ -62,6 +62,7 @@ public class DefaultConfigProducer implements IConfigProducer
     @Override
     public void setIdProducerConfig( int nIdProducerConfig )
     {
+        // Nothing to set
     }
 
     /**
@@ -89,6 +90,7 @@ public class DefaultConfigProducer implements IConfigProducer
     @Override
     public void setIdQuestionFileName( int nIdQuestionFileName )
     {
+     // Nothing to set
     }
 
     /**
@@ -114,6 +116,7 @@ public class DefaultConfigProducer implements IConfigProducer
     @Override
     public void setName( String strName )
     {
+     // Nothing to set
     }
 
     /**
@@ -132,6 +135,7 @@ public class DefaultConfigProducer implements IConfigProducer
     @Override
     public void setIdForm( int nIdForm )
     {
+     // Nothing to set
     }
 
     /**
@@ -169,6 +173,7 @@ public class DefaultConfigProducer implements IConfigProducer
     @Override
     public void setTypeConfigFileName( String strTypeConfigFileName )
     {
+     // Nothing to set
     }
 
     /**
@@ -187,6 +192,7 @@ public class DefaultConfigProducer implements IConfigProducer
     @Override
     public void setTextFileName( String strTextFileName )
     {
+     // Nothing to set
     }
 
     /**
@@ -205,5 +211,6 @@ public class DefaultConfigProducer implements IConfigProducer
     @Override
     public void setExtractFilled( Boolean bExtractNotFilled )
     {
+     // Nothing to set
     }
 }
