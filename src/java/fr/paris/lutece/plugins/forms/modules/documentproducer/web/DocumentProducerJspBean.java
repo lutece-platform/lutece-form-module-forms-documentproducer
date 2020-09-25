@@ -523,7 +523,7 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
                 || !RBACService.isAuthorized( Form.RESOURCE_TYPE, String.valueOf( form.getId( ) ),
                         FormsDocumentProducerResourceIdService.PERMISSION_MANAGE_DOCUMENTPRODUCER, getUser( ) ) )
         {
-            throw new AccessDeniedException( );
+            throw new AccessDeniedException( "Unauthorized" );
         }
     }
 
