@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,13 +41,15 @@ import fr.paris.lutece.util.ReferenceList;
  */
 public enum DocumentType
 {
-    PDF( ".pdf" ), CSV( ".csv" );
+    PDF( ".pdf" ),
+    CSV( ".csv" );
 
     private final String _strExtension;
 
     /**
      * Constructor for DocumentType
-     * @param strExtension 
+     * 
+     * @param strExtension
      */
     DocumentType( String strExtension )
     {
@@ -56,6 +58,7 @@ public enum DocumentType
 
     /**
      * Get the file extennsion of a document type
+     * 
      * @return the extension of a document type
      */
     public String getExtension( )
@@ -81,6 +84,7 @@ public enum DocumentType
 
     /**
      * Get document type from string doc type
+     * 
      * @param strDocType
      * @return the DocumentType obj
      */
@@ -98,6 +102,7 @@ public enum DocumentType
 
     /**
      * Get a reference list of the enum
+     * 
      * @return a reference list of the enum
      */
     public static ReferenceList toReferenceList( )
