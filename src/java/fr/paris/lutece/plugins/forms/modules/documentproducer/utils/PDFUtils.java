@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -229,8 +229,8 @@ public final class PDFUtils
         {
             SimpleDateFormat monthDayYearformatter = new SimpleDateFormat( AppPropertiesService.getProperty( PROPERTY_POLICE_FORMAT_DATE ) );
 
-            Font fontDate = new Font( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_NAME, 0 ), AppPropertiesService.getPropertyInt(
-                    PROPERTY_POLICE_SIZE_DATE, 0 ), AppPropertiesService.getPropertyInt( PROPERTY_POLICE_STYLE_DATE, 0 ) );
+            Font fontDate = new Font( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_NAME, 0 ),
+                    AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SIZE_DATE, 0 ), AppPropertiesService.getPropertyInt( PROPERTY_POLICE_STYLE_DATE, 0 ) );
 
             Paragraph paragraphDate = new Paragraph( new Phrase( monthDayYearformatter.format( formResponse.getCreation( ) ), fontDate ) );
 
@@ -252,7 +252,8 @@ public final class PDFUtils
         {
 
             image = Image.getInstance(
-                    ImageIO.read( new File( AppPathService.getAbsolutePathFromRelativePath( AppPropertiesService.getProperty( PROPERTY_IMAGE_URL ) ) ) ), null );
+                    ImageIO.read( new File( AppPathService.getAbsolutePathFromRelativePath( AppPropertiesService.getProperty( PROPERTY_IMAGE_URL ) ) ) ),
+                    null );
             image.setAlignment( AppPropertiesService.getPropertyInt( PROPERTY_IMAGE_ALIGN, 0 ) );
             float fitWidth;
             float fitHeight;
@@ -284,8 +285,9 @@ public final class PDFUtils
             AppLogService.error( e );
         }
 
-        Font fontTitle = new Font( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_NAME, 0 ), AppPropertiesService.getPropertyInt(
-                PROPERTY_POLICE_SIZE_TITLE_FORMS, 0 ), AppPropertiesService.getPropertyInt( PROPERTY_POLICE_STYLE_TITLE_FORMS, 0 ) );
+        Font fontTitle = new Font( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_NAME, 0 ),
+                AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SIZE_TITLE_FORMS, 0 ),
+                AppPropertiesService.getPropertyInt( PROPERTY_POLICE_STYLE_TITLE_FORMS, 0 ) );
 
         fontTitle.isUnderlined( );
 
@@ -326,27 +328,28 @@ public final class PDFUtils
         for ( FormResponseStep formResponseStep : listFormResponseStep )
         {
             Step step = formResponseStep.getStep( );
-            List<FormQuestionResponse> listFormQuestionResponseOfStep = FormQuestionResponseHome.findQuestionsByStepAndFormResponse( formResponse.getId( ) , step.getId());
-            
-            if ( !listFormQuestionResponseOfStep.isEmpty()  )
+            List<FormQuestionResponse> listFormQuestionResponseOfStep = FormQuestionResponseHome.findQuestionsByStepAndFormResponse( formResponse.getId( ),
+                    step.getId( ) );
+
+            if ( !listFormQuestionResponseOfStep.isEmpty( ) )
             {
                 boolean bPrintStep = false;
-                
+
                 for ( FormQuestionResponse formQuestionResponseOfStep : listFormQuestionResponseOfStep )
                 {
                     // Print the question
                     Question questionOfStep = QuestionHome.findByPrimaryKey( formQuestionResponseOfStep.getQuestion( ).getId( ) );
 
-                    if ( listIdEntryConfig.isEmpty( ) || listIdEntryConfig.contains( questionOfStep.getId( )) )
+                    if ( listIdEntryConfig.isEmpty( ) || listIdEntryConfig.contains( questionOfStep.getId( ) ) )
                     {
                         bPrintStep = true;
                     }
                 }
-                
+
                 if ( bPrintStep )
                 {
-                    Font fontStepTitle = new Font( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_NAME, 0 ), AppPropertiesService.getPropertyInt(
-                    PROPERTY_POLICE_SIZE_STEP, 0 ), Font.UNDERLINE );
+                    Font fontStepTitle = new Font( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_NAME, 0 ),
+                            AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SIZE_STEP, 0 ), Font.UNDERLINE );
 
                     Paragraph paragraphTitleStep = new Paragraph( new Phrase( step.getTitle( ), fontStepTitle ) );
                     paragraphTitleStep.setAlignment( Element.ALIGN_LEFT );
@@ -356,16 +359,17 @@ public final class PDFUtils
 
                     addElementToDocument( document, paragraphTitleStep );
                 }
-                
+
                 for ( FormQuestionResponse formQuestionResponseOfStep : listFormQuestionResponseOfStep )
                 {
                     // Print the question
                     Question questionOfStep = QuestionHome.findByPrimaryKey( formQuestionResponseOfStep.getQuestion( ).getId( ) );
 
-                    if ( listIdEntryConfig.isEmpty( ) || listIdEntryConfig.contains( questionOfStep.getId( )) )
+                    if ( listIdEntryConfig.isEmpty( ) || listIdEntryConfig.contains( questionOfStep.getId( ) ) )
                     {
-                        Font fontQuestionTitle = new Font( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_NAME, 0 ), AppPropertiesService.getPropertyInt(
-                                PROPERTY_POLICE_SIZE_QUESTION, 0 ), AppPropertiesService.getPropertyInt( PROPERTY_POLICE_STYLE_QUESTION, 0 ) );
+                        Font fontQuestionTitle = new Font( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_NAME, 0 ),
+                                AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SIZE_QUESTION, 0 ),
+                                AppPropertiesService.getPropertyInt( PROPERTY_POLICE_STYLE_QUESTION, 0 ) );
 
                         Paragraph paragraphTitleQuestion = new Paragraph( new Phrase( questionOfStep.getTitle( ), fontQuestionTitle ) );
                         paragraphTitleQuestion.setAlignment( Element.ALIGN_LEFT );
@@ -377,13 +381,15 @@ public final class PDFUtils
 
                         // Print the responses
 
-                        Font fontResponse = new Font( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_NAME, 0 ), AppPropertiesService.getPropertyInt(
-                                PROPERTY_POLICE_SIZE_RESPONSE, 0 ), AppPropertiesService.getPropertyInt( PROPERTY_POLICE_STYLE_RESPONSE, 0 ) );
+                        Font fontResponse = new Font( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_NAME, 0 ),
+                                AppPropertiesService.getPropertyInt( PROPERTY_POLICE_SIZE_RESPONSE, 0 ),
+                                AppPropertiesService.getPropertyInt( PROPERTY_POLICE_STYLE_RESPONSE, 0 ) );
 
                         if ( formQuestionResponseOfStep.getEntryResponse( ).size( ) == 1 )
                         {
                             // One element, build a paragraph
-                            String strValue= EntryTypeServiceManager.getEntryTypeService( questionOfStep.getEntry( ) ).getResponseValueForRecap( questionOfStep.getEntry( ), null, formQuestionResponseOfStep.getEntryResponse( ).get( 0 ), Locale.FRENCH );
+                            String strValue = EntryTypeServiceManager.getEntryTypeService( questionOfStep.getEntry( ) ).getResponseValueForRecap(
+                                    questionOfStep.getEntry( ), null, formQuestionResponseOfStep.getEntryResponse( ).get( 0 ), Locale.FRENCH );
                             Paragraph paragraphResponse = new Paragraph( new Phrase( strValue, fontResponse ) );
                             paragraphResponse.setAlignment( Element.ALIGN_LEFT );
                             paragraphResponse.setIndentationLeft( AppPropertiesService.getPropertyInt( PROPERTY_POLICE_MARGIN_LEFT_RESPONSE, 0 ) );
@@ -402,7 +408,8 @@ public final class PDFUtils
                             // If many elements, build a list
                             for ( Response response : formQuestionResponseOfStep.getEntryResponse( ) )
                             {
-                                String strValue= EntryTypeServiceManager.getEntryTypeService( questionOfStep.getEntry( ) ).getResponseValueForRecap( questionOfStep.getEntry( ), null, response, Locale.FRENCH );
+                                String strValue = EntryTypeServiceManager.getEntryTypeService( questionOfStep.getEntry( ) )
+                                        .getResponseValueForRecap( questionOfStep.getEntry( ), null, response, Locale.FRENCH );
                                 listValue.add( new ListItem( strValue, fontResponse ) );
                             }
 
@@ -485,11 +492,12 @@ public final class PDFUtils
         if ( strTypeConfigFileName.equals( FORM_QUESTION_TYPE_FILE_NAME ) )
         {
 
-            FormQuestionResponse formQuestionResponse = FormQuestionResponseHome.findFormQuestionResponseByResponseQuestion( nIdRecord, configProducer.getIdQuestionFileName( ) ).get( 0 );
-            
-            if( formQuestionResponse != null )
+            FormQuestionResponse formQuestionResponse = FormQuestionResponseHome
+                    .findFormQuestionResponseByResponseQuestion( nIdRecord, configProducer.getIdQuestionFileName( ) ).get( 0 );
+
+            if ( formQuestionResponse != null )
             {
-                return formQuestionResponse.getEntryResponse().get( 0 ).getResponseValue();
+                return formQuestionResponse.getEntryResponse( ).get( 0 ).getResponseValue( );
             }
         }
         return null;

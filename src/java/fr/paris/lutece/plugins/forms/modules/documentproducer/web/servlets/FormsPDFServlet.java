@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -62,7 +62,7 @@ public class FormsPDFServlet
 
     // PARAMETERS
     public static final String PARAMETER_ID_FORM_RESPONSE = "id_form_response";
-    
+
     private static final ConfigProducerService _manageConfigProducerService = (ConfigProducerService) SpringContextService
             .getBean( "forms-documentproducer.manageConfigProducer" );
 
@@ -83,13 +83,12 @@ public class FormsPDFServlet
         int nIdFormResponse = Integer.parseInt( strIdFormResponse );
         FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
 
-        if ( ( formResponse == null )
-                || !RBACService.isAuthorized( Form.RESOURCE_TYPE, Integer.toString( formResponse.getFormId( ) ),
-                        FormsDocumentProducerResourceIdService.PERMISSION_GENERATE_PDF, AdminUserService.getAdminUser(request) ) )
+        if ( ( formResponse == null ) || !RBACService.isAuthorized( Form.RESOURCE_TYPE, Integer.toString( formResponse.getFormId( ) ),
+                FormsDocumentProducerResourceIdService.PERMISSION_GENERATE_PDF, AdminUserService.getAdminUser( request ) ) )
         {
             throw new AccessDeniedException( "Unauthorized" );
         }
-        
+
         ConfigProducer configProducer = _manageConfigProducerService.loadDefaultConfig( plugin, formResponse.getFormId( ), DocumentType.PDF );
 
         PDFUtils.doDownloadPDF( request, response, plugin, configProducer,
