@@ -87,7 +87,7 @@ public class FormsPDFServlet
                 || !RBACService.isAuthorized( Form.RESOURCE_TYPE, Integer.toString( formResponse.getFormId( ) ),
                         FormsDocumentProducerResourceIdService.PERMISSION_GENERATE_PDF, AdminUserService.getAdminUser(request) ) )
         {
-            throw new AccessDeniedException( );
+            throw new AccessDeniedException( "Unauthorized" );
         }
         
         ConfigProducer configProducer = _manageConfigProducerService.loadDefaultConfig( plugin, formResponse.getFormId( ), DocumentType.PDF );
