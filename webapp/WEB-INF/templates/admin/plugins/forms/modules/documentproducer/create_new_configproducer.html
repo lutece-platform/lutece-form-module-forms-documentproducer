@@ -1,159 +1,121 @@
 <#assign defaut_question_form_filename=-1>
 <#if position_question_form_filename?exists>
-        <#assign defaut_question_form_filename=position_question_form_filename>
+	<#assign defaut_question_form_filename=position_question_form_filename>
 </#if>
-    <form class="form-horizontal" method="post" action="jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp">
-    <@messages errors=errors />
-        <div class="row">
-            <div class="col-xs-12 col-sm-12">
-                    <div class="box box-primary">
-                            <div class="box-header">
-                                    <h3 class="box-title">#i18n{module.forms.documentproducer.create.producer.config.title}</h3>
-                            </div>
-                            <div class="box-body">
-                                    <div class="form-group">
-                                            <label class="control-label col-xs-12 col-sm-2"  for="title">#i18n{module.forms.documentproducer.create.producer.config.name} * </label>
-                                            <div class="col-xs-12 col-sm-9">
-                                                    <#if config_name?exists>
-                                                            <input type="text" maxlength="255" value="${config_name}" class="form-control" name="name">
-                                                    <#else>
-                                                            <input type="text" maxlength="255" value="" class="form-control" name="name">
-                                                    </#if>
-                                            </div>
-                                    </div>
-                                    <div class="form-group">
-                                            <label class="control-label col-xs-12 col-sm-2" for="">#i18n{module.forms.documentproducer.create.producer.config.documentType} *</label>
-                                            <div class="col-xs-12 col-sm-9">
-                                                <@comboWithParams name="type" default_value=default_document_type_ref_list?string additionalParameters=" class=\"form-control\" " items=document_type_ref_list  />
-                                            </div>
-                                    </div>
-                                    <div class="form-group">
-                                            <label class="control-label col-xs-12 col-sm-2" for="">#i18n{module.forms.documentproducer.create.producer.config.namefile} *</label>
-                                            <div class="col-xs-12 col-sm-9">
-                                                    <div class="radio" >
-                                                            <label for="type_config_file_name1">
-                                                                    <input type="radio" name="type_config_file_name" id="type_config_file_name1" value="default" <#if !mark_type_config_file_name?exists || mark_type_config_file_name='default'>checked="checked"</#if>> #i18n{module.forms.documentproducer.create.producer.config.namefile.default}
-                                                            </label>
-                                                    </div>
-                                            </div>
-                                    </div>
-                                    
-                                    <#if question_ref_list?exists && question_ref_list?has_content>
-                                            <div class="form-group">
-                                                    <label class="control-label col-xs-12 col-sm-2" for=""></label>
-                                                    <div class="col-xs-12 col-sm-9">
-                                                            <div class="radio">
-                                                                    <label for="type_config_file_name2">
-                                                                            <input type="radio" name="type_config_file_name" id="type_config_file_name2" value="form_question" <#if mark_type_config_file_name?exists && mark_type_config_file_name='form_question'> checked="checked" </#if>> #i18n{module.forms.documentproducer.create.producer.config.namefile.field}
-                                                                    </label>
-                                                            </div>
-                                                    </div>
-                                            </div>
-                                            <div class="form-group">
-                                                    <label class="control-label col-xs-12 col-sm-2" for=""></label>
-                                                    <div class="col-xs-12 col-sm-9">
-                                                            <@comboWithParams name="id_question_file_name" default_value=defaut_question_form_filename?string additionalParameters=" class=\"form-control\" " items=question_ref_list  />
-                                                    </div>
-                                            </div>
-                                    </#if>
-                                    <div class="form-group">
-                                            <label class="control-label col-xs-12 col-sm-2" for=""></label>
-                                            <div class="col-xs-12 col-sm-9">
-                                                    <div class="radio">
-                                                            <label for="type_config_file_name3" >
-                                                                    <input type="radio" name="type_config_file_name" id="type_config_file_name3"  value="text" <#if mark_type_config_file_name?exists && mark_type_config_file_name='text'>checked="checked"</#if>> #i18n{module.forms.documentproducer.create.producer.config.namefile.text}
-                                                            </label>
-                                                    </div>
-                                            </div>
-                                    </div>
-                                    <div class="form-group">
-                                            <label class="control-label col-xs-12 col-sm-2" for=""></label>
-                                            <div class="col-xs-12 col-sm-9">
-                                                    <input type="text" maxlength="255" value="<#if mark_text_file_name?exists>${mark_text_file_name}</#if>" class="form-control" id="" name="text_file_name">
-                                            </div>
-                                    </div>
-                                    <div class="form-group">
-                                            <label class="control-label col-xs-12 col-sm-2" for=""></label>
-                                            <div class="col-xs-12 col-sm-9">
-                                                    <div class="checkbox">
-                                                            <label for="extract_filled" >
-                                                                    <input type="checkbox" id="extract_filled" name="extract_filled"> &nbsp;#i18n{module.forms.documentproducer.create.producer.config.extract.filled}
-                                                            </label>
-                                                    </div>
-                                            </div>
-                                    </div>
-                            </div>
-                    </div>
-            </div>
-    </div>
-    <div class="row">
-            <div class="col-xs-12 col-sm-12">
-                    <div class="box box-primary">
-                            <div class="box-header">
-                                    <h3 class="box-title">#i18n{module.forms.documentproducer.create.producer.config.title}</h3>
-                                    <div class="box-tools">
-                                            <button class="btn btn-primary btn-flat btn-xs" type="button" id="button_allchecked">
-                                                    <i class="fa fa-check-circle-o"></i>&nbsp; #i18n{module.forms.documentproducer.create.producer.config.button.allchecked}
-                                            </button>
-                                    </div>
-                            </div>
-                            <div class="box-body table-responsive">
-                                    <table class="table table-hover table-condensed">
-                                            <thead>
-                                                    <tr>
-                                                            <th>#i18n{forms.modify_forms.manage_question.row_title}</th>
-                                                            <th>#i18n{forms.modify_forms.manage_question.row_type}</th>
-                                                            <th>#i18n{forms.modify_forms.manage_question.row_actions}</th>
-                                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                            <#if question_list?has_content>
-                                                    <#list question_list as question>
-                                                        <tr>
-                                                                <td>
-                                                                        <#if question.entry.entryType.comment>
-                                                                                ${question.comment}
-                                                                            <#else>
-                                                                                ${question.title}
-                                                                        </#if>
-                                                                </td>
-                                                                <td>
-                                                                    #i18n{${question.entry.entryType.title}}
-                                                                </td>
-                                                                <td>
-                                                                   <input type="checkbox" name="config_question" value="${question.id}">
-                                                                    
-                                                                </td>
-                                                        </tr>
-                                                    </#list>
-                                            </#if>
-                                    </tbody>
-                                    </table>
-                                    <br>
-                                    <div class="form-group">
-                                            <div class="col-xs-12 col-sm-offset-3 col-sm-9">
-                                            <button class="btn btn-primary btn-flat" type="submit" name="action_doCreateConfigProducer">
-                                                    <i class="fa fa-check"></i>&nbsp; #i18n{module.forms.documentproducer.create.producer.config.button.create}
-                                            </button>
-                                            <button class="btn btn-default btn-flat" type="submit" name="view_getManageConfigProducer">
-                                                    <i class="fa fa-remove"></i>&nbsp; #i18n{module.forms.documentproducer.create.producer.config.button.cancel}
-                                            </button>
-
-                                    </div>
-                            </div>
-            </div>
-    </div>
-</form>
+    
+<@tform method='post' action='jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp'>
+	<@messages errors=errors />
+	<@row>
+		<@columns>
+				<@box>
+					<@boxHeader title='#i18n{module.forms.documentproducer.create.producer.config.title}' />
+					<@boxBody>
+					
+					<@formGroup labelFor='title' labelKey='#i18n{module.forms.documentproducer.create.producer.config.name}' mandatory=true>
+						<#if config_name?exists>
+							<@input type='text' name='name' maxlength=255 value='${config_name}' />
+						<#else>
+							<@input type='text' name='name' maxlength=255 value='' />
+						</#if>
+					</@formGroup>
+					<@formGroup labelFor='' labelKey='#i18n{module.forms.documentproducer.create.producer.config.documentType}' mandatory=true>
+						<@select name='type' default_value=default_document_type_ref_list?string items=document_type_ref_list  />
+					</@formGroup>
+					<@formGroup labelFor='type_config_file_name' labelKey='#i18n{module.forms.documentproducer.create.producer.config.namefile}' mandatory=true>
+						<@radioButton labelFor='type_config_file_name1' labelKey='#i18n{module.forms.documentproducer.create.producer.config.namefile.default}' name='type_config_file_name' id='type_config_file_name1' value='default' checked=(!mark_type_config_file_name?exists || mark_type_config_file_name='default') />
+					</@formGroup>
+								
+					<#if question_ref_list?exists && question_ref_list?has_content>
+						<@formGroup labelFor='' labelKey=''>
+							<@radioButton labelFor='type_config_file_name2' labelKey='#i18n{module.forms.documentproducer.create.producer.config.namefile.field}' name='type_config_file_name' id='type_config_file_name2' value='form_question' checked=(mark_type_config_file_name?exists && mark_type_config_file_name='form_question') />
+						</@formGroup>
+						<@formGroup labelFor='id_question_file_name' labelKey='#i18n{module.forms.documentproducer.create.producer.config.namefile.field}'>
+							<@select name='id_question_file_name' default_value=defaut_question_form_filename?string items=question_ref_list  />
+						</@formGroup>
+					</#if>
+					<@formGroup>
+						<@radioButton labelFor='type_config_file_name3' labelKey='#i18n{module.forms.documentproducer.create.producer.config.namefile.text}' name='type_config_file_name' id='type_config_file_name3' value='text' checked=(mark_type_config_file_name?exists && mark_type_config_file_name='text') />
+					</@formGroup>
+					<@formGroup labelFor='text_file_name' labelKey='#i18n{module.forms.documentproducer.create.producer.config.namefile.text}'>
+						<#if mark_text_file_name?exists><#assign value = '${mark_text_file_name}' /><#else><#assign value = '' /></#if>
+						<@input type='text' name='text_file_name' id='text_file_name' maxlength=255 value=value />
+					</@formGroup>
+					<@formGroup labelFor='' labelKey=''>
+						<@checkBox labelFor='extract_filled' labelKey='#i18n{module.forms.documentproducer.create.producer.config.extract.filled}' name='extract_filled' id='extract_filled' />
+					</@formGroup>
+				</@boxBody>
+			</@box>
+		</@columns>
+	</@row>
+	<@row>
+		<@columns>
+			<@box>
+				<@boxHeader title='#i18n{module.forms.documentproducer.create.producer.config.title}'>
+					<@button type='button' id='button_checkbox' class='allunchecked' buttonIcon='square' title='#i18n{module.forms.documentproducer.create.producer.config.button.allchecked}' hideTitle=['xs'] size='sm' />
+				</@boxHeader>
+				<@boxBody>
+					<@table>
+						<thead>
+							<tr>
+								<th>#i18n{forms.modify_forms.manage_question.row_title}</th>
+								<th>#i18n{forms.modify_forms.manage_question.row_type}</th>
+								<th>#i18n{forms.modify_forms.manage_question.row_actions}</th>
+							</tr>
+						</thead>
+						<tbody>
+							<#if question_list?has_content>
+								<#list question_list as question>
+									<tr>
+										<td>
+											<label for="config_question_${question?index}" class='text-primary'>
+											<#if question.entry.entryType.comment>
+												${question.comment}
+											<#else>
+												${question.title}
+											</#if>
+											</label>
+										</td>
+										<td>
+											#i18n{${question.entry.entryType.title}}
+										</td>
+										<td>
+										   <@checkBox name='config_question' id='config_question_${question?index}' value='${question.id}' />
+										</td>
+									</tr>
+								</#list>
+							</#if>
+						</tbody>
+					</@table>
+					
+					<@formGroup>
+						<@button type='submit' name='action_doCreateConfigProducer' title='#i18n{module.forms.documentproducer.create.producer.config.button.create}' buttonIcon='check' />
+						<@button type='submit' name='view_getManageConfigProducer' title='#i18n{module.forms.documentproducer.create.producer.config.button.cancel}' buttonIcon='times' cancel=true />
+					</@formGroup>
+				</@boxBody>
+			</@box>
+		</@columns>
+	</@row>
+</@tform>
 
 <script>
     $(function() {
 
-        $("#button_allchecked").click( function()
-        {
-            $("input[name='config_question']").each( function () {
-                 $(this).prop('checked', true);
-            });
-        }
-      );
+        $("#button_checkbox").click( function() {
+			if ($("#button_checkbox").hasClass("allunchecked")) {
+				$("input[name='config_question']").each( function () {
+					 $(this).prop("checked", true);
+				});
+				 $("#button_checkbox").toggleClass("allunchecked").toggleClass("allchecked");
+				 $("#button_checkbox").find("i").toggleClass("fa-square").toggleClass("fa-check-square");
+			}
+			else {
+				$("input[name='config_question']").each( function () {
+					 $(this).prop("checked", false);
+				});
+				 $("#button_checkbox").toggleClass("allchecked").toggleClass("allunchecked");
+				 $("#button_checkbox").find("i").toggleClass("fa-check-square").toggleClass("fa-square");
+			}
+			}
+		);
     });
 </script>

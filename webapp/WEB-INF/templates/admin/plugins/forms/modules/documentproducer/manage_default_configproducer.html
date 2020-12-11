@@ -1,29 +1,20 @@
-<div class="row">
-	<div class="col-xs-12 col-sm-12">
-		<div class="box box-primary">
-			<div class="box-header">
-				<h3 class="box-title">#i18n{module.forms.documentproducer.create.producer.default.config.title} </h3>
-			</div>
-			<div class="box-body">
-				<form class="form-horizontal" method="post" action="jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp">
-					<input type="hidden" name="action" value="doSaveAdvancedParamConfigProducer">
-                                        <#list map_default_config_ref_list?keys as doc_type>
-                                            <div class="form-group">
-                                                    <label class="control-label col-xs-12 col-sm-2" for="config">${doc_type}</label>
-                                                    <div class="col-xs-12 col-sm-9">
-                                                            <@comboWithParams name=doc_type default_value=(map_default_config_default_value[doc_type])!'' additionalParameters=" class=\"form-control\" " items=map_default_config_ref_list[doc_type] />
-                                                    </div>
-                                            </div>
+<@row>
+	<@columns>
+		<@box>
+			<@boxHeader title='#i18n{module.forms.documentproducer.create.producer.default.config.title}' />
+			<@boxBody>
+				<@tform method='post' action='jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp'>
+					<@input type='hidden' name='action' value='doSaveAdvancedParamConfigProducer' />
+					<#list map_default_config_ref_list?keys as doc_type>
+						<@formGroup labelFor='config' labelKey='${doc_type}'>
+							<@select name=doc_type default_value=(map_default_config_default_value[doc_type])!'' items=map_default_config_ref_list[doc_type] />
+						</@formGroup>
 					</#list>
-					<div class="form-group">
-						<div class="col-xs-12 col-sm-offset-3 col-sm-9">
-							<button class="btn btn-flat btn-primary" type="submit" name="save" >
-								<i class="fa fa-check"></i> #i18n{module.forms.documentproducer.create.producer.default.config.ok}
-							</button>
-						</div>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-</div>
+					<@formGroup>
+						<@button type='submit' name='save' buttonIcon='check' title='#i18n{module.forms.documentproducer.create.producer.default.config.ok}' />
+					</@formGroup>
+				</@tform>
+			</@boxBody>
+		</@box>
+	</@columns>
+</@row>
