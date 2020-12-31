@@ -26,11 +26,11 @@
 						<tr>
 							<td>${config.name}</td>
 							<td>${config.type}</td>
-							<td>
+							<@td>
 								<@aButton href='jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp?id_config_producer=${config.idProducerConfig}&view=getModifyConfigProducer' buttonIcon='pencil' size='sm' />
 								<@aButton href='jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp?id_config_producer=${config.idProducerConfig}&action=doCreateCopyConfigProducer' buttonIcon='copy' size='sm' />
 								<@aButton href='jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp?id_config_producer=${config.idProducerConfig}&view=getConfirmDeleteConfigProducer' buttonIcon='trash' color='danger' size='sm' />
-							</td>
+							</@td>
 						</tr>
 						</#list>
 					</tbody>
