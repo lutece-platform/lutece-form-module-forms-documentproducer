@@ -1,24 +1,23 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<plug-in>
+<?xml version="1.0" encoding="UTF-8"?><plug-in>
 
     <!-- Plugin Informations -->
     <name>forms-documentproducer</name>
     <class>fr.paris.lutece.plugins.forms.modules.documentproducer.service.FormsDocumentProducerPlugin
     </class>
-    <version>1.0.1-SNAPSHOT</version>
-    <documentation />
-    <installation />
-    <changes />
-    <user-guide />
-    <description />
-    <provider />
+    <version>1.0.1</version>
+    <documentation/>
+    <installation/>
+    <changes/>
+    <user-guide/>
+    <description/>
+    <provider/>
     <provider-url>http://lutece.paris.fr</provider-url>
     <icon-url>images/admin/skin/plugins/forms/modules/documentproducer/forms-documentproducer.png
     </icon-url>
     <copyright>Copyright 2001-2011 Mairie de Paris</copyright>
     <core-version-dependency>
         <min-core-version>6.1.0</min-core-version>
-        <max-core-version />
+        <max-core-version/>
     </core-version-dependency>
     <db-pool-required>1</db-pool-required>
 
