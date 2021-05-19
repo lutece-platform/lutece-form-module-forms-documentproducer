@@ -12,7 +12,9 @@
 					<@formGroup labelFor='title' labelKey='#i18n{module.forms.documentproducer.modify.producer.config.name}' mandatory=true>
 						<@input type='text' maxlength=255 value='${config_producer.name!""}' name='name' />
 					</@formGroup>
-					<@formGroup labelFor='' labelKey='#i18n{module.forms.documentproducer.modify.producer.config.documentType}' mandatory=true>						<@select name='type' default_value=default_document_type_ref_list?string items=document_type_ref_list />					</@formGroup>
+					<@formGroup labelFor='' labelKey='#i18n{module.forms.documentproducer.modify.producer.config.documentType}' mandatory=true>
+						<@select name='type' default_value=default_document_type_ref_list?string items=document_type_ref_list />
+					</@formGroup>
 					<@formGroup labelFor='' labelKey='#i18n{module.forms.documentproducer.modify.producer.config.namefile}' mandatory=true>
 						<@radioButton labelFor='type_config_file_name1' labelKey='#i18n{module.forms.documentproducer.modify.producer.config.namefile.default}' name='type_config_file_name' id='type_config_file_name1' value='default' checked=(config_producer.typeConfigFileName == 'default') />
 					</@formGroup>
@@ -21,12 +23,16 @@
 						<@formGroup labelFor='' labelKey=''>
 							<@radioButton labelFor='type_config_file_name2' labelKey='#i18n{module.forms.documentproducer.modify.producer.config.namefile.field}' name='type_config_file_name' id='type_config_file_name2' value='form_question' checked=(config_producer.typeConfigFileName == 'form_question') />
 						</@formGroup>
-						<@formGroup labelFor='' labelKey=''>							<@select name='id_question_file_name' default_value=(config_producer.idQuestionNameFile?string)!'' items=question_ref_list  />						</@formGroup>
+						<@formGroup labelFor='' labelKey=''>
+							<@select name='id_question_file_name' default_value=(config_producer.idQuestionNameFile?string)!'' items=question_ref_list  />
+						</@formGroup>
 					</#if>
 					<@formGroup labelFor='' labelKey=''>
 						<@radioButton labelFor='type_config_file_name3' labelKey='#i18n{module.forms.documentproducer.modify.producer.config.namefile.text}' name='type_config_file_name' id='type_config_file_name3' value='text' checked=(config_producer.typeConfigFileName == 'text') />
 					</@formGroup>
-					<@formGroup labelFor='' labelKey=''>						<@input type='text' maxlength=255 value='${config_producer.textFileName!""}' id='' name='text_file_name' />					</@formGroup>
+					<@formGroup labelFor='' labelKey=''>
+						<@input type='text' maxlength=255 value='${config_producer.textFileName!""}' id='' name='text_file_name' />
+					</@formGroup>
 					<@formGroup labelFor='' labelKey=''>
 						<@checkBox labelFor='extract_filled' labelKey='#i18n{module.forms.documentproducer.modify.producer.config.extract.filled}' name='extract_filled' id='extract_filled' checked=config_producer.extractFilled />
 					</@formGroup>
@@ -66,7 +72,7 @@
 										#i18n{${question.entry.entryType.title}}
 									</td>
 									<td>
-										<@checkBox name='config_question' id='config_question_${question?index}' value='${question.id}' checked=(id_question_list?has_content && id_question_list?seq_contains(question.id) />
+										<@checkBox name='config_question' id='config_question_${question?index}' value='${question.id}' checked=(id_question_list?has_content && id_question_list?seq_contains(question.id)) />
 									</td>
 								</tr>
 							</#list>
@@ -81,10 +87,8 @@
 		</@columns>
 	</@row>
 </@tform>
-
 <script>
     $(function() {
-
         $("#button_checkbox").click( function() {
 			if ($("#button_checkbox").hasClass("allunchecked")) {
 				$("input[name='config_question']").each( function () {
