@@ -48,40 +48,32 @@
 				</@boxHeader>
 				<@boxBody>
 					<@table>
-						<thead>
-							<tr>
-								<th>#i18n{forms.modify_forms.manage_question.row_title}</th>
-								<th>#i18n{forms.modify_forms.manage_question.row_type}</th>
-								<th>#i18n{forms.modify_forms.manage_question.row_actions}</th>
-							</tr>
-						</thead>
-						<tbody>
+						<@tr>
+							<@th>#i18n{forms.modify_forms.manage_question.row_title}</@th>
+							<@th>#i18n{forms.modify_forms.manage_question.row_type}</@th>
+							<@th>#i18n{forms.modify_forms.manage_question.row_actions}</@th>
+						</@tr>
+						<@tableHeadBodySeparator />
 						<#if question_list?has_content>
 							<#list question_list as question>
-								<tr>
-									<td>
-										<label for="config_question_${question?index}" class='text-primary'>
-										<#if question.entry.entryType.comment>
-											${question.comment}
-										<#else>
-											${question.title}
-										</#if>
-										</label>
-									</td>
-									<td>
-										#i18n{${question.entry.entryType.title}}
-									</td>
-									<td>
+								<@tr>
+									<@td>
+										<@formLabel labelFor="config_question_${question?index}" class="text-primary" mandatory=false>
+										<#if question.entry.entryType.comment> ${question.comment} <#else> ${question.title} </#if>
+										</@formLabel>
+									</@td>
+									<@td>#i18n{${question.entry.entryType.title}}</@td>
+									<@td>
 										<@checkBox name='config_question' id='config_question_${question?index}' value='${question.id}' checked=(id_question_list?has_content && id_question_list?seq_contains(question.id)) />
-									</td>
-								</tr>
+									</@td>
+								</@tr>
 							</#list>
 						</#if>
-						</tbody>
 					</@table>
 					<@formGroup>
-					<@button type='submit' name='action_doModifyConfigProducer' buttonIcon='check' title='#i18n{module.forms.documentproducer.modify.producer.config.button.modify}' />
-					<@button type='submit' name='view_getManageConfigProducer' buttonIcon='times' title='#i18n{module.forms.documentproducer.modify.producer.config.button.cancel}' cancel=true />
+						<@button type='submit' name='action_doModifyConfigProducer' buttonIcon='check' title='#i18n{module.forms.documentproducer.modify.producer.config.button.modify}' />
+						<@button type='submit' name='view_getManageConfigProducer' buttonIcon='times' title='#i18n{module.forms.documentproducer.modify.producer.config.button.cancel}' cancel=true />
+					</@formGroup>
 				</@boxBody>
 			</@box>
 		</@columns>
