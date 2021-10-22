@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -151,7 +151,7 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
     Form _form;
 
     @View( value = VIEW_SELECT_FORM, defaultView = true )
-    public String getSelectForm( HttpServletRequest request ) 
+    public String getSelectForm( HttpServletRequest request )
     {
         String strIdForm = request.getParameter( PARAMETER_ID_FORM );
 

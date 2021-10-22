@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -90,7 +90,7 @@ public class DefaultConfigProducer implements IConfigProducer
     @Override
     public void setIdQuestionFileName( int nIdQuestionFileName )
     {
-     // Nothing to set
+        // Nothing to set
     }
 
     /**
@@ -116,7 +116,7 @@ public class DefaultConfigProducer implements IConfigProducer
     @Override
     public void setName( String strName )
     {
-     // Nothing to set
+        // Nothing to set
     }
 
     /**
@@ -135,7 +135,7 @@ public class DefaultConfigProducer implements IConfigProducer
     @Override
     public void setIdForm( int nIdForm )
     {
-     // Nothing to set
+        // Nothing to set
     }
 
     /**
@@ -173,7 +173,7 @@ public class DefaultConfigProducer implements IConfigProducer
     @Override
     public void setTypeConfigFileName( String strTypeConfigFileName )
     {
-     // Nothing to set
+        // Nothing to set
     }
 
     /**
@@ -192,7 +192,7 @@ public class DefaultConfigProducer implements IConfigProducer
     @Override
     public void setTextFileName( String strTextFileName )
     {
-     // Nothing to set
+        // Nothing to set
     }
 
     /**
@@ -211,6 +211,6 @@ public class DefaultConfigProducer implements IConfigProducer
     @Override
     public void setExtractFilled( Boolean bExtractNotFilled )
     {
-     // Nothing to set
+        // Nothing to set
     }
 }

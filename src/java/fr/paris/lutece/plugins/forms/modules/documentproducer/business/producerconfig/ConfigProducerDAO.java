@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -76,7 +76,7 @@ public class ConfigProducerDAO implements IConfigProducerDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_MAX_ID, plugin ) )
         {
             daoUtil.executeQuery( );
-    
+
             if ( daoUtil.next( ) )
             {
                 nIdConfig = daoUtil.getInt( 1 ) + 1;
@@ -95,7 +95,7 @@ public class ConfigProducerDAO implements IConfigProducerDAO
             daoUtil.setString( 6, configProducer.getTextFileName( ) );
             daoUtil.setString( 7, configProducer.getTypeConfigFileName( ) );
             daoUtil.setBoolean( 8, configProducer.getExtractFilled( ) );
-    
+
             daoUtil.executeUpdate( );
         }
 
@@ -125,7 +125,7 @@ public class ConfigProducerDAO implements IConfigProducerDAO
         {
             daoUtil.setInt( 1, nIdConfig );
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 configProducer.setIdProducerConfig( daoUtil.getInt( 1 ) );
@@ -154,7 +154,7 @@ public class ConfigProducerDAO implements IConfigProducerDAO
         {
             daoUtil.setInt( 1, nIdForms );
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 ConfigProducer producerConfig = new ConfigProducer( );
@@ -184,7 +184,7 @@ public class ConfigProducerDAO implements IConfigProducerDAO
         {
             daoUtil.setInt( 1, nIdConfig );
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 listIdQuestion.add( Integer.valueOf( daoUtil.getInt( 1 ) ) );
@@ -262,9 +262,9 @@ public class ConfigProducerDAO implements IConfigProducerDAO
         {
             daoUtil.setInt( 1, nIdConfig );
             daoUtil.executeQuery( );
-    
+
             List<Integer> listIdQuestion = loadListConfigQuestion( plugin, nIdConfig );
-    
+
             while ( daoUtil.next( ) )
             {
                 ConfigProducer configProducer = new ConfigProducer( );
@@ -275,7 +275,7 @@ public class ConfigProducerDAO implements IConfigProducerDAO
                 configProducer.setTextFileName( daoUtil.getString( 6 ) );
                 configProducer.setTypeConfigFileName( daoUtil.getString( 7 ) );
                 configProducer.setExtractFilled( daoUtil.getBoolean( 8 ) );
-    
+
                 addNewConfig( plugin, configProducer, listIdQuestion );
             }
 
@@ -292,7 +292,7 @@ public class ConfigProducerDAO implements IConfigProducerDAO
         {
             daoUtil.setInt( 1, nIdForm );
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 try ( DAOUtil daoUtil2 = new DAOUtil( SQL_QUERY_DELETE_CONFIG_QUESTION, plugin ) )
@@ -337,7 +337,7 @@ public class ConfigProducerDAO implements IConfigProducerDAO
             daoUtil.setInt( 1, nIdForms );
             daoUtil.setString( 2, docType.toString( ) );
             daoUtil.executeQuery( );
-    
+
             if ( daoUtil.next( ) )
             {
                 defaultConfigProducer.setIdProducerConfig( daoUtil.getInt( 1 ) );
@@ -366,7 +366,7 @@ public class ConfigProducerDAO implements IConfigProducerDAO
         {
             daoUtil.setInt( 1, nIdForms );
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 ConfigProducer producerConfig = new ConfigProducer( );

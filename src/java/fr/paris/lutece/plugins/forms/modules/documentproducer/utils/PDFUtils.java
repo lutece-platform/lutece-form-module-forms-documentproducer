@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -198,7 +198,7 @@ public final class PDFUtils
             fitWidth = 100f;
             fitHeight = 100f;
         }
-        
+
         try
         {
 
@@ -257,7 +257,7 @@ public final class PDFUtils
             Step step = formResponseStep.getStep( );
             List<FormQuestionResponse> listFormQuestionResponseOfStep = FormQuestionResponseHome.findQuestionsByStepAndFormResponse( formResponse.getId( ),
                     step.getId( ) );
-            
+
             if ( CollectionUtils.isEmpty( listFormQuestionResponseOfStep ) )
             {
                 continue;
