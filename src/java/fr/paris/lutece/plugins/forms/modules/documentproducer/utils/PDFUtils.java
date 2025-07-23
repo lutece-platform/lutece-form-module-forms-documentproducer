@@ -47,7 +47,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -74,7 +74,7 @@ import fr.paris.lutece.plugins.forms.modules.documentproducer.business.producerc
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.util.string.StringUtil;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
 

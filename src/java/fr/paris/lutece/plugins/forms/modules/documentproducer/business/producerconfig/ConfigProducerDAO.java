@@ -40,11 +40,13 @@ import java.util.Locale;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
 
 /**
  * Allow to access ProducerConfig data
  * 
  */
+@ApplicationScoped
 public class ConfigProducerDAO implements IConfigProducerDAO
 {
     private static final String SQL_QUERY_INSERT_CONFIG_PRODUCER = "INSERT INTO forms_config_producer (id_config,name,id_question_name_file,id_form,config_type,text_file_name,type_config_file_name,extract_empty) VALUES ( ? , ? , ? , ? , ? , ? , ?, ? );";

@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.modules.documentproducer.business.producerconfig;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 
 /**
  * Configuration to generate PDF. AdminUser can select different forms entry to make them appear in the PDF.

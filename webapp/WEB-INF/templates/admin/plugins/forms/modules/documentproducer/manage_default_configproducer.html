@@ -4,14 +4,13 @@
 			<@boxHeader title='#i18n{module.forms.documentproducer.create.producer.default.config.title}' />
 			<@boxBody>
 				<@tform method='post' action='jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp'>
-					<@input type='hidden' name='action' value='doSaveAdvancedParamConfigProducer' />
 					<#list map_default_config_ref_list?keys as doc_type>
 						<@formGroup labelFor='config' labelKey='${doc_type}'>
 							<@select name=doc_type default_value=(map_default_config_default_value[doc_type])!'' items=map_default_config_ref_list[doc_type] />
 						</@formGroup>
 					</#list>
 					<@formGroup>
-						<@button type='submit' name='save' buttonIcon='check' title='#i18n{module.forms.documentproducer.create.producer.default.config.ok}' />
+						<@button type='submit' name='action_saveAdvancedParamConfigProducer' buttonIcon='check' title='#i18n{module.forms.documentproducer.create.producer.default.config.ok}' />
 					</@formGroup>
 				</@tform>
 			</@boxBody>

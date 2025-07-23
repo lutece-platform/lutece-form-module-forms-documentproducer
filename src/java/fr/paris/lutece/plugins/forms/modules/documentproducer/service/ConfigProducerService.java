@@ -37,6 +37,8 @@ import fr.paris.lutece.plugins.forms.modules.documentproducer.business.producerc
 import fr.paris.lutece.plugins.forms.modules.documentproducer.business.producerconfig.ConfigProducerHome;
 import fr.paris.lutece.plugins.forms.modules.documentproducer.business.producerconfig.DocumentType;
 import fr.paris.lutece.portal.service.plugin.Plugin;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +48,8 @@ import java.util.Locale;
  * ConfigProducerService
  *
  */
+@ApplicationScoped
+@Named( "forms-documentproducer.manageConfigProducer" )
 public class ConfigProducerService
 {
     /**

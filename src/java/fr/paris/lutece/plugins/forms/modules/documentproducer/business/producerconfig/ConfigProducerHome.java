@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Locale;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * ConfigProducerHome
@@ -45,7 +45,7 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
  */
 public final class ConfigProducerHome
 {
-    private static IConfigProducerDAO _dao = SpringContextService.getBean( "configProducerDAO" );
+    private static IConfigProducerDAO _dao = CDI.current( ).select( IConfigProducerDAO.class ).get( );
 
     /**
      * Constructor

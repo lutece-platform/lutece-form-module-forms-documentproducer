@@ -4,7 +4,7 @@
     <name>forms-documentproducer</name>
     <class>fr.paris.lutece.plugins.forms.modules.documentproducer.service.FormsDocumentProducerPlugin
     </class>
-    <version>1.0.4-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
     <documentation/>
     <installation/>
     <changes/>
@@ -16,7 +16,7 @@
     </icon-url>
     <copyright>Copyright 2001-2011 Mairie de Paris</copyright>
     <core-version-dependency>
-        <min-core-version>6.1.0</min-core-version>
+        <min-core-version>8.0.0</min-core-version>
         <max-core-version/>
     </core-version-dependency>
     <db-pool-required>1</db-pool-required>
