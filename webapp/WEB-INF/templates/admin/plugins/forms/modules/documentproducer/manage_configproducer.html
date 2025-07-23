@@ -3,12 +3,10 @@
 			<@box>
 				<@boxHeader title='#i18n{module.forms.documentproducer.manage.producer.config.title}'>
 					<@tform method='post' action='jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp'>
-						<@input type='hidden' name='view' value='getManageAdvancedParametersConfigProducer' />
-						<@button type='submit' buttonIcon='cog' title='#i18n{module.forms.documentproducer.manage.producer.config.button.advanced.parameters}' hideTitle=['xs','sm'] size='sm' />
+						<@button type='submit' name='view_getManageAdvancedParametersConfigProducer' buttonIcon='cog' title='#i18n{module.forms.documentproducer.manage.producer.config.button.advanced.parameters}' hideTitle=['xs','sm'] size='sm' />
 					</@tform>
 					<@tform method='post' action='jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp'>
-						<@input type='hidden' name='view' value='getCreateConfigProducer' />
-						<@button type='submit' buttonIcon='plus-square' title='#i18n{module.forms.documentproducer.manage.producer.config.button.create}' hideTitle=['xs','sm'] size='sm' />
+						<@button type='submit' name='view_createConfigProducer' buttonIcon='plus-square' title='#i18n{module.forms.documentproducer.manage.producer.config.button.create}' hideTitle=['xs','sm'] size='sm' />
 					</@tform>
 				</@boxHeader>
 				<@boxBody>
@@ -27,9 +25,13 @@
 							<td>${config.name}</td>
 							<td>${config.type}</td>
 							<@td>
-								<@aButton href='jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp?id_config_producer=${config.idProducerConfig}&view=getModifyConfigProducer' buttonIcon='pencil' size='sm' />
-								<@aButton href='jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp?id_config_producer=${config.idProducerConfig}&action=doCreateCopyConfigProducer' buttonIcon='copy' size='sm' />
-								<@aButton href='jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp?id_config_producer=${config.idProducerConfig}&view=getConfirmDeleteConfigProducer' buttonIcon='trash' color='danger' size='sm' />
+								<@tform method='post' action='jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp'>
+							        <@input type='hidden' name='id_config_producer' value='${config.idProducerConfig}' />
+							    
+							        <@button type='submit' name='view_modifyConfigProducer' buttonIcon='pencil' size='sm' />
+							        <@button type='submit' name='action_createCopyConfigProducer' buttonIcon='copy' size='sm' />
+								    <@button type='submit' name='view_confirmDeleteConfigProducer' buttonIcon='trash' color='danger' size='sm' />
+					            </@tform>
 							</@td>
 						</tr>
 						</#list>

@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.modules.documentproducer.web;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.Question;
@@ -42,7 +43,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -55,7 +59,6 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
@@ -74,6 +77,8 @@ import java.util.stream.Collectors;
  * DocumentProducerJspBean
  * 
  */
+@SessionScoped
+@Named
 @Controller( controllerJsp = "ManageConfigProducer.jsp", controllerPath = "jsp/admin/plugins/forms/modules/documentproducer/", right = "CONFIG_DOCUMENT_PRODUCER_MANAGEMENT" )
 public class DocumentProducerJspBean extends MVCAdminJspBean
 {
@@ -128,21 +133,25 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
 
     // VIEWS
     private static final String VIEW_MANAGE_CONFIG_PRODUCER = "getManageConfigProducer";
-    private static final String VIEW_GET_CREATE_CONFIG_PRODUCER = "getCreateConfigProducer";
-    private static final String VIEW_CONFIRM_DELETE_CONFIG_PRODUCER = "getConfirmDeleteConfigProducer";
-    private static final String VIEW_GET_MODIFY_CONFIG_PRODUCER = "getModifyConfigProducer";
+    private static final String VIEW_CREATE_CONFIG_PRODUCER = "createConfigProducer";
+    private static final String VIEW_CONFIRM_DELETE_CONFIG_PRODUCER = "confirmDeleteConfigProducer";
+    private static final String VIEW_MODIFY_CONFIG_PRODUCER = "modifyConfigProducer";
     private static final String VIEW_MANAGE_ADVANCED_PARAM_CONFIG_PRODUCER = "getManageAdvancedParametersConfigProducer";
     private static final String VIEW_SELECT_FORM = "getSelectForm";
 
     // ACTIONS
-    private static final String ACTION_CREATE_CONFIG_PRODUCER = "doCreateConfigProducer";
-    private static final String ACTION_DELETE_CONFIG_PRODUCER = "doDeleteConfigProducer";
-    private static final String ACTION_MODIFY_CONFIG_PRODUCER = "doModifyConfigProducer";
-    private static final String ACTION_SAVE_ADVANCED_PARAM_CONFIG_PRODUCER = "doSaveAdvancedParamConfigProducer";
-    private static final String ACTION_CREATE_COPY_CONFIG_PRODUCER = "doCreateCopyConfigProducer";
+    private static final String ACTION_CREATE_CONFIG_PRODUCER = "createConfigProducer";
+    private static final String ACTION_DELETE_CONFIG_PRODUCER = "deleteConfigProducer";
+    private static final String ACTION_MODIFY_CONFIG_PRODUCER = "modifyConfigProducer";
+    private static final String ACTION_SAVE_ADVANCED_PARAM_CONFIG_PRODUCER = "saveAdvancedParamConfigProducer";
+    private static final String ACTION_CREATE_COPY_CONFIG_PRODUCER = "createCopyConfigProducer";
 
+    // JSP
+    private static final String JSP_MANAGE_CONFIG_PRODUCER = "jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp";
+    
     // BEANS
-    private static final ConfigProducerService _manageConfigProducerService = SpringContextService.getBean( "forms-documentproducer.manageConfigProducer" );
+    @Inject
+    private ConfigProducerService _manageConfigProducerService;
     // BEANS VALIDATION
     private static final String VALIDATION_ATTRIBUTES_PREFIX = "modules.forms.documentproducer.model.entity.config.producer.attribute.";
 
@@ -161,7 +170,7 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
         }
 
         List<Form> listAuthorizedForm = (List<Form>) RBACService.getAuthorizedCollection( FormHome.getFormList( ),
-                FormsDocumentProducerResourceIdService.PERMISSION_MANAGE_DOCUMENTPRODUCER, AdminUserService.getAdminUser( request ) );
+                FormsDocumentProducerResourceIdService.PERMISSION_MANAGE_DOCUMENTPRODUCER, ( User ) AdminUserService.getAdminUser( request ) );
         Map<String, Object> model = getModel( );
         model.put( MARK_FORM_REF_LIST, ReferenceList.convert( listAuthorizedForm, "id", "title", true ) );
 
@@ -197,7 +206,7 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
 
         checkAuthorized( _form );
 
-        Map<String, Object> model = new HashMap<>( );
+        Map<String, Object> model = getModel( );
 
         List<ConfigProducer> listConfigProducer = _manageConfigProducerService.loadListProducerConfig( getPlugin( ), _form.getId( ) );
         model.put( MARK_CONFIG_LIST, listConfigProducer );
@@ -213,8 +222,8 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
      * @return create html page
      * @throws fr.paris.lutece.portal.service.admin.AccessDeniedException
      */
-    @View( value = VIEW_GET_CREATE_CONFIG_PRODUCER )
-    public String createConfigProducer( HttpServletRequest request ) throws AccessDeniedException
+    @View( VIEW_CREATE_CONFIG_PRODUCER )
+    public String getCreateConfigProducer( HttpServletRequest request ) throws AccessDeniedException
     {
         _configProducer = new ConfigProducer( );
 
@@ -242,7 +251,7 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
      * @return message to confirm the creation or not
      * @throws fr.paris.lutece.portal.service.admin.AccessDeniedException
      */
-    @Action( value = ACTION_CREATE_CONFIG_PRODUCER )
+    @Action( ACTION_CREATE_CONFIG_PRODUCER )
     public String doCreateConfigProducer( HttpServletRequest request ) throws AccessDeniedException
     {
         // Check if user is authorized and if selected questions are authorized
@@ -259,7 +268,7 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
         }
         else
         {
-            return redirectView( request, VIEW_GET_CREATE_CONFIG_PRODUCER );
+            return redirectView( request, VIEW_CREATE_CONFIG_PRODUCER );
         }
     }
 
@@ -270,7 +279,7 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
      *            request
      * @return admin message
      */
-    @View( value = VIEW_CONFIRM_DELETE_CONFIG_PRODUCER )
+    @View( value = VIEW_CONFIRM_DELETE_CONFIG_PRODUCER, securityTokenAction = ACTION_DELETE_CONFIG_PRODUCER )
     public String getConfirmDeleteConfigProducer( HttpServletRequest request ) throws AccessDeniedException
     {
         checkAuthorized( _form );
@@ -278,8 +287,8 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
         UrlItem url = new UrlItem( getActionUrl( ACTION_DELETE_CONFIG_PRODUCER ) );
         url.addParameter( PARAMETER_ID_CONFIG_PRODUCER, nId );
 
-        String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_CONFIG_PRODUCER, url.getUrl( ),
-                AdminMessage.TYPE_CONFIRMATION );
+        String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_CONFIG_PRODUCER, null, null, url.getUrl( ), null, 
+                AdminMessage.TYPE_CONFIRMATION, null, JSP_MANAGE_CONFIG_PRODUCER );
 
         return redirect( request, strMessageUrl );
     }
@@ -308,7 +317,7 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
      *            request
      * @return modify html page
      */
-    @View( value = VIEW_GET_MODIFY_CONFIG_PRODUCER )
+    @View( VIEW_MODIFY_CONFIG_PRODUCER )
     public String getModifyConfigProducer( HttpServletRequest request ) throws AccessDeniedException
     {
         checkAuthorized( _form );
@@ -337,7 +346,7 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
      *            request
      * @return a message to confirm and redirect to manage page
      */
-    @Action( value = ACTION_MODIFY_CONFIG_PRODUCER )
+    @Action( ACTION_MODIFY_CONFIG_PRODUCER )
     public String doModifyConfigProducer( HttpServletRequest request ) throws AccessDeniedException
     {
         // Check if user is authorized and if selected questions are authorized
@@ -365,7 +374,7 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
      *            request
      * @return manage page
      */
-    @Action( value = ACTION_CREATE_COPY_CONFIG_PRODUCER )
+    @Action( value = ACTION_CREATE_COPY_CONFIG_PRODUCER, securityTokenDisabled = true )
     public String doCopyConfigProducer( HttpServletRequest request ) throws AccessDeniedException
     {
         checkAuthorized( _form );
@@ -400,7 +409,7 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
                 return listStrIdQuestion.stream( ).map( Integer::parseInt ).collect( Collectors.toList( ) );
             }
         }
-        return new ArrayList( );
+        return new ArrayList<Integer>( );
     }
 
     /**
@@ -410,7 +419,7 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
      *            request
      * @return html page to manage advanced parameters
      */
-    @View( value = VIEW_MANAGE_ADVANCED_PARAM_CONFIG_PRODUCER )
+    @View( VIEW_MANAGE_ADVANCED_PARAM_CONFIG_PRODUCER )
     public String getManageAdvancedParameters( HttpServletRequest request ) throws AccessDeniedException
     {
         checkAuthorized( _form );
@@ -461,7 +470,7 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
      *            request
      * @return confirm page
      */
-    @Action( value = ACTION_SAVE_ADVANCED_PARAM_CONFIG_PRODUCER )
+    @Action( value = ACTION_SAVE_ADVANCED_PARAM_CONFIG_PRODUCER, securityTokenDisabled = true )
     public String doSaveAdvancedParameters( HttpServletRequest request ) throws AccessDeniedException
     {
         checkAuthorized( _form );
@@ -522,7 +531,7 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
     private void checkAuthorized( Form form ) throws AccessDeniedException
     {
         if ( !StringUtils.isNotBlank( String.valueOf( form.getId( ) ) ) || !RBACService.isAuthorized( Form.RESOURCE_TYPE, String.valueOf( form.getId( ) ),
-                FormsDocumentProducerResourceIdService.PERMISSION_MANAGE_DOCUMENTPRODUCER, getUser( ) ) )
+                FormsDocumentProducerResourceIdService.PERMISSION_MANAGE_DOCUMENTPRODUCER, (User) getUser( ) ) )
         {
             throw new AccessDeniedException( "Unauthorized" );
         }

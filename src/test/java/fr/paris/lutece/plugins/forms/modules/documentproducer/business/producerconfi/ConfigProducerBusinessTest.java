@@ -36,6 +36,9 @@ package fr.paris.lutece.plugins.forms.modules.documentproducer.business.producer
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import fr.paris.lutece.plugins.forms.modules.documentproducer.business.producerconfig.ConfigProducer;
 import fr.paris.lutece.plugins.forms.modules.documentproducer.business.producerconfig.ConfigProducerHome;
 import fr.paris.lutece.portal.service.plugin.Plugin;
@@ -47,13 +50,14 @@ public class ConfigProducerBusinessTest extends LuteceTestCase
 
     private Plugin _plugin;
 
-    @Override
+    @BeforeEach
     protected void setUp( ) throws Exception
     {
         super.setUp( );
         _plugin = PluginService.getPlugin( "forms-documentproducer" );
     }
-
+    
+    @Test
     public void testCRUD( )
     {
         ConfigProducer producer = new ConfigProducer( );

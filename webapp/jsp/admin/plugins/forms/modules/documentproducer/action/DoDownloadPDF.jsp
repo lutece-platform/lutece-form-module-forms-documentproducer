@@ -1,2 +1,1 @@
-<jsp:useBean id="formsPDFJspBean" scope="session" class="fr.paris.lutece.plugins.forms.modules.documentproducer.web.servlets.FormsPDFServlet" />
-<% formsPDFJspBean.doDownloadPDF( request , response );%>
+${ formsPDFServlet.doDownloadPDF( pageContext.request , pageContext.response ) }
