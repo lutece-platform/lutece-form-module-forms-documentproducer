@@ -1,3 +1,6 @@
+-- liquibase formatted sql
+-- changeset forms-documentproducer:create_db_forms_documentproducer.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 DROP TABLE IF EXISTS forms_config_producer;
 DROP TABLE IF EXISTS forms_config_question;
 DROP TABLE IF EXISTS forms_default_config;

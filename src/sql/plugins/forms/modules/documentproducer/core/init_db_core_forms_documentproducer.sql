@@ -1,3 +1,6 @@
+-- liquibase formatted sql
+-- changeset forms-documentproducer:init_db_core_forms_documentproducer.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 --
 -- Data for table core_admin_right
 --
