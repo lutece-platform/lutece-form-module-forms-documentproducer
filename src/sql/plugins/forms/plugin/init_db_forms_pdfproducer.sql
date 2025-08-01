@@ -1,3 +1,6 @@
+-- liquibase formatted sql
+-- changeset forms-documentproducer:init_db_forms_pdfproducer.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 -- 
 -- Init form actions table
 --
