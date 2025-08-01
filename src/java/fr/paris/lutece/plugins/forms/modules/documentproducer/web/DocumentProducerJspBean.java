@@ -113,7 +113,7 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
     private static final String MARK_MAP_DEFAULT_CONFIG_DEFAULT_VALUE = "map_default_config_default_value";
 
     // Properties
-    private static final String PROPERTY_ID_ENTRIES_TYPE_ALLOWED = "forms.filter.entries.type.config.default";
+    private static final String PROPERTY_ENTRIES_TYPE_ALLOWED = "forms.filter.entries.type.config.default";
 
     // Messages (I18n keys)
     private static final String MESSAGE_DELETED_CONFIG = "module.forms.documentproducer.message.producer.config.deleted";
@@ -497,11 +497,11 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
      * 
      * @param strPropertyEntryTypes
      *            the property containing the entry types
-     * @return a list of integer
+     * @return a list of string
      */
-    private static List<Integer> fillListEntryTypes( String strPropertyEntryTypes )
+    private static List<String> fillListEntryTypes( String strPropertyEntryTypes )
     {
-        List<Integer> listEntryTypes = new ArrayList<>( );
+        List<String> listEntryTypes = new ArrayList<>( );
         String strEntryTypes = AppPropertiesService.getProperty( strPropertyEntryTypes );
 
         if ( StringUtils.isNotBlank( strEntryTypes ) )
@@ -510,10 +510,9 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
 
             for ( String strAcceptEntryType : listAcceptEntryTypesForIdDemand )
             {
-                if ( StringUtils.isNotBlank( strAcceptEntryType ) && StringUtils.isNumeric( strAcceptEntryType ) )
+                if ( StringUtils.isNotBlank( strAcceptEntryType ) )
                 {
-                    int nAcceptedEntryType = Integer.parseInt( strAcceptEntryType );
-                    listEntryTypes.add( nAcceptedEntryType );
+                    listEntryTypes.add( strAcceptEntryType );
                 }
             }
         }
@@ -540,12 +539,12 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
     private List<Question> getTextAndNumQuestion( List<Question> listQuestion )
     {
 
-        List<Integer> listAuthorizedIdEntryType = fillListEntryTypes( PROPERTY_ID_ENTRIES_TYPE_ALLOWED );
+        List<String> listAuthorizedEntryType = fillListEntryTypes( PROPERTY_ENTRIES_TYPE_ALLOWED );
         List<Question> listAuthorizedQuestion = new ArrayList<>( );
 
         for ( Question question : listQuestion )
         {
-            if ( listAuthorizedIdEntryType.contains( question.getEntry( ).getEntryType( ).getIdType( ) ) )
+            if ( listAuthorizedEntryType.contains( question.getEntry( ).getEntryType( ).getBeanName( ) ) )
             {
                 listAuthorizedQuestion.add( question );
             }
