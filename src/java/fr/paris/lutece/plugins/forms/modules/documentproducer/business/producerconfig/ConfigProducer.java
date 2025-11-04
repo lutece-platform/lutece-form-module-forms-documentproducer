@@ -33,13 +33,15 @@
  */
 package fr.paris.lutece.plugins.forms.modules.documentproducer.business.producerconfig;
 
+import java.io.Serializable;
+
 import jakarta.validation.constraints.NotEmpty;
 
 /**
  * Configuration to generate PDF. AdminUser can select different forms entry to make them appear in the PDF.
  * 
  */
-public class ConfigProducer implements IConfigProducer
+public class ConfigProducer implements IConfigProducer, Serializable
 {
     private int _nIdProducerConfig;
     @NotEmpty( message = "#i18n{module.forms.documentproducer.validation.config.producer.notEmpty}" )
