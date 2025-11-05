@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS forms_default_config;
 /* Table structure for table form_config_producer				*/
 /*==============================================================*/
 CREATE TABLE forms_config_producer (
-  id_config INT NOT NULL,
+  id_config INT AUTO_INCREMENT,
   name VARCHAR(255) DEFAULT NULL,
   id_question_name_file INT DEFAULT NULL,
   id_form INT DEFAULT NULL,

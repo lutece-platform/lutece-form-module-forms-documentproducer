@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.modules.documentproducer.business.producerconfig;
 
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -49,9 +50,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class ConfigProducerDAO implements IConfigProducerDAO
 {
-    private static final String SQL_QUERY_INSERT_CONFIG_PRODUCER = "INSERT INTO forms_config_producer (id_config,name,id_question_name_file,id_form,config_type,text_file_name,type_config_file_name,extract_empty) VALUES ( ? , ? , ? , ? , ? , ? , ?, ? );";
+    private static final String SQL_QUERY_INSERT_CONFIG_PRODUCER = "INSERT INTO forms_config_producer (name,id_question_name_file,id_form,config_type,text_file_name,type_config_file_name,extract_empty) VALUES ( ? , ? , ? , ? , ? , ?, ? );";
     private static final String SQL_QUERY_INSERT_CONFIG_QUESTION = "INSERT INTO forms_config_question (id_config,id_question) VALUES ( ? , ? );";
-    private static final String SQL_QUERY_SELECT_MAX_ID = "SELECT max(id_config) FROM forms_config_producer";
     private static final String SQL_QUERY_SELECT_CONFIG = "SELECT id_config, name, id_question_name_file, id_form, config_type, text_file_name, type_config_file_name,extract_empty FROM forms_config_producer WHERE id_config = ? ;";
     private static final String SQL_QUERY_SELECT_CONFIG_BY_FORMS = "SELECT id_config, name, id_question_name_file, id_form, config_type, text_file_name, type_config_file_name FROM forms_config_producer WHERE id_form = ? ;";
     private static final String SQL_QUERY_SELECT_CONFIG_QUESTION = "SELECT id_question FROM forms_config_question WHERE id_config = ? ;";
@@ -74,31 +74,23 @@ public class ConfigProducerDAO implements IConfigProducerDAO
     @Override
     public void addNewConfig( Plugin plugin, ConfigProducer configProducer, List<Integer> listIdQuestion )
     {
-        int nIdConfig = 1;
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_MAX_ID, plugin ) )
+
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_CONFIG_PRODUCER, Statement.RETURN_GENERATED_KEYS, plugin ) )
         {
-            daoUtil.executeQuery( );
-
-            if ( daoUtil.next( ) )
-            {
-                nIdConfig = daoUtil.getInt( 1 ) + 1;
-            }
-            configProducer.setIdProducerConfig( nIdConfig );
-
-        }
-
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_CONFIG_PRODUCER, plugin ) )
-        {
-            daoUtil.setInt( 1, nIdConfig );
-            daoUtil.setString( 2, configProducer.getName( ) );
-            daoUtil.setInt( 3, configProducer.getIdQuestionFileName( ) );
-            daoUtil.setInt( 4, configProducer.getIdForm( ) );
-            daoUtil.setString( 5, configProducer.getType( ) );
-            daoUtil.setString( 6, configProducer.getTextFileName( ) );
-            daoUtil.setString( 7, configProducer.getTypeConfigFileName( ) );
-            daoUtil.setBoolean( 8, configProducer.getExtractFilled( ) );
+            int i = 0;
+            daoUtil.setString( ++i, configProducer.getName( ) );
+            daoUtil.setInt( ++i, configProducer.getIdQuestionFileName( ) );
+            daoUtil.setInt( ++i, configProducer.getIdForm( ) );
+            daoUtil.setString( ++i, configProducer.getType( ) );
+            daoUtil.setString( ++i, configProducer.getTextFileName( ) );
+            daoUtil.setString( ++i, configProducer.getTypeConfigFileName( ) );
+            daoUtil.setBoolean( ++i, configProducer.getExtractFilled( ) );
 
             daoUtil.executeUpdate( );
+            if ( daoUtil.nextGeneratedKey( ) )
+            {
+            	configProducer.setIdProducerConfig( daoUtil.getGeneratedKeyInt( 1 ) );
+            }         
         }
 
         if ( !listIdQuestion.isEmpty( ) )
@@ -107,7 +99,7 @@ public class ConfigProducerDAO implements IConfigProducerDAO
             {
                 try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_CONFIG_QUESTION, plugin ) )
                 {
-                    daoUtil.setInt( 1, nIdConfig );
+                    daoUtil.setInt( 1, configProducer.getIdProducerConfig( ) );
                     daoUtil.setInt( 2, idQuestion.intValue( ) );
                     daoUtil.executeUpdate( );
                 }
