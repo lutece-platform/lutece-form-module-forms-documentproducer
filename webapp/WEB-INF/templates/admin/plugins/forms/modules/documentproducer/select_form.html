@@ -1,19 +1,19 @@
-<@row>
-	<@columns>
-		<@box>
-			<@boxHeader title='#i18n{module.forms.documentproducer.select.form.config.export.title}' />
-			<@boxBody>
-				<@tform method='post' action='jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp'>
-					<#if form_ref_list?exists && form_ref_list?has_content >
-					<@formGroup labelFor='id_form' labelKey='#i18n{module.forms.documentproducer.select.form.label}' mandatory=true>
-						<@select name='id_form' default_value=form_ref_list[0].code items=form_ref_list />
-					</@formGroup>
-					</#if>
-					<@formGroup>
-						<@button type='submit' name='view_getManageConfigProducer' buttonIcon='check' title='#i18n{module.forms.documentproducer.select.form.button.select}' />
-					</@formGroup>
-				</@tform>
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
+<@pageContainer>
+    <@pageColumn>
+		<@pageHeader title='#i18n{module.forms.documentproducer.select.form.config.export.title}' class='col-md-12' />
+		<#if form_ref_list?exists && form_ref_list?has_content >
+			<@tform method='post' action='jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp' boxed=true>
+				<@formGroup labelFor='id_form' labelKey='#i18n{module.forms.documentproducer.select.form.label}' mandatory=true>
+				<@inputGroup>
+					<@select name='id_form' default_value=form_ref_list[0].code items=form_ref_list />
+					<@button type='submit' name='view_getManageConfigProducer' buttonIcon='check me-1' title='#i18n{module.forms.documentproducer.select.form.button.select}' />
+				</@inputGroup>
+				</@formGroup>
+			</@tform>
+		<#else>
+			<@card>
+				<@empty />
+			</@card>
+		</#if>
+	</@pageColumn>
+</@pageContainer>
