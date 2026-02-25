@@ -1,48 +1,32 @@
-<@row>
-	<@columns>
-			<@box>
-				<@boxHeader title='#i18n{module.forms.documentproducer.manage.producer.config.title}'>
-					<@tform method='post' action='jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp'>
-						<@button type='submit' name='view_getManageAdvancedParametersConfigProducer' buttonIcon='cog' title='#i18n{module.forms.documentproducer.manage.producer.config.button.advanced.parameters}' hideTitle=['xs','sm'] size='sm' />
-					</@tform>
-					<@tform method='post' action='jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp'>
-						<@button type='submit' name='view_createConfigProducer' buttonIcon='plus-square' title='#i18n{module.forms.documentproducer.manage.producer.config.button.create}' hideTitle=['xs','sm'] size='sm' />
-					</@tform>
-				</@boxHeader>
-				<@boxBody>
-				<#if config_list?has_content>
-				<@table id='results_list'>
-					<thead>
-						<tr>
-							<th>#i18n{module.forms.documentproducer.manage.producer.config.name}</th>
-							<th>#i18n{module.forms.documentproducer.manage.producer.config.type}</th>
-							<th>#i18n{module.forms.documentproducer.manage.producer.config.actions}</th>
-						</tr>
-					</thead>
-					<tbody>
-						<#list config_list as config>
-						<tr>
-							<td>${config.name}</td>
-							<td>${config.type}</td>
-							<@td>
-								<@tform method='post' action='jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp'>
-							        <@input type='hidden' name='id_config_producer' value='${config.idProducerConfig}' />
-							    
-							        <@button type='submit' name='view_modifyConfigProducer' buttonIcon='pencil' size='sm' />
-							        <@button type='submit' name='action_createCopyConfigProducer' buttonIcon='copy' size='sm' />
-								    <@button type='submit' name='view_confirmDeleteConfigProducer' buttonIcon='trash' color='danger' size='sm' />
-					            </@tform>
-							</@td>
-						</tr>
-						</#list>
-					</tbody>
-				</@table>
-				<#else>
-				<@alert color='warning'>
-					#i18n{module.forms.documentproducer.manage.producer.config.empty.list}
-				</@alert>
-				</#if>
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
+<@pageContainer>
+    <@pageColumn>
+		<@pageHeader title='#i18n{module.forms.documentproducer.manage.producer.config.title}'>
+			<@tform method='post' action='jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp'>
+				<@button type='submit' name='view_getManageAdvancedParametersConfigProducer' buttonIcon='cog me-1' title='#i18n{module.forms.documentproducer.manage.producer.config.button.advanced.parameters}' hideTitle=['xs','sm'] />
+				<@button type='submit' name='view_createConfigProducer' buttonIcon='plus me-1' title='#i18n{module.forms.documentproducer.manage.producer.config.button.create}' hideTitle=['xs','sm'] />
+			</@tform>
+		</@pageHeader>
+		<#if config_list?has_content>
+			<@manageFeature id='results_list'>
+			<#list config_list as config>
+				<@manageFeatureItem>
+					<@manageFeatureItemColumn>#i18n{module.forms.documentproducer.manage.producer.config.name} : ${config.name}</@manageFeatureItemColumn>
+					<@manageFeatureItemColumn>#i18n{module.forms.documentproducer.manage.producer.config.type} : ${config.type}</@manageFeatureItemColumn>
+					<@manageFeatureItemColumn align='end'>
+						<@tform method='post' action='jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp'>
+							<@input type='hidden' name='id_config_producer' value='${config.idProducerConfig}' />
+							<@button type='submit' name='view_modifyConfigProducer' buttonIcon='pencil'/>
+							<@button type='submit' name='action_createCopyConfigProducer' buttonIcon='copy' />
+							<@button type='submit' name='view_confirmDeleteConfigProducer' buttonIcon='trash' color='danger' />
+						</@tform>
+					</@manageFeatureItemColumn>
+				</@manageFeatureItem>
+			</#list>
+			</@manageFeature>
+		<#else>
+			<@card>
+				<@empty title='#i18n{module.forms.documentproducer.manage.producer.config.empty.list}' />
+			</@card>
+		</#if>
+	</@pageColumn>
+</@pageContainer>

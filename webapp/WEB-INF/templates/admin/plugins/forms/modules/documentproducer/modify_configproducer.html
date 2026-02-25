@@ -1,102 +1,99 @@
 <#assign defaut_question_form_filename=-1>
-<#if position_question_form_filename?exists>
-        <#assign defaut_question_form_filename=position_question_form_filename>
-</#if>
-<@tform method='post' action='jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp'>
-    <@messages errors=errors />
-    <@row>
-		<@columns>
-			<@box>
-				<@boxHeader title='#i18n{module.forms.documentproducer.modify.producer.config.title}' />
-				<@boxBody>
-					<@formGroup labelFor='title' labelKey='#i18n{module.forms.documentproducer.modify.producer.config.name}' mandatory=true>
-						<@input type='text' maxlength=255 value='${config_producer.name!""}' name='name' />
-					</@formGroup>
-					<@formGroup labelFor='' labelKey='#i18n{module.forms.documentproducer.modify.producer.config.documentType}' mandatory=true>
-						<@select name='type' default_value=default_document_type_ref_list?string items=document_type_ref_list />
-					</@formGroup>
-					<@formGroup labelFor='' labelKey='#i18n{module.forms.documentproducer.modify.producer.config.namefile}' mandatory=true>
-						<@radioButton labelFor='type_config_file_name1' labelKey='#i18n{module.forms.documentproducer.modify.producer.config.namefile.default}' name='type_config_file_name' id='type_config_file_name1' value='default' checked=(config_producer.typeConfigFileName == 'default') />
-					</@formGroup>
-					
-					<#if question_ref_list?exists && question_ref_list?has_content>
-						<@formGroup labelFor='' labelKey=''>
-							<@radioButton labelFor='type_config_file_name2' labelKey='#i18n{module.forms.documentproducer.modify.producer.config.namefile.field}' name='type_config_file_name' id='type_config_file_name2' value='form_question' checked=(config_producer.typeConfigFileName == 'form_question') />
-						</@formGroup>
-						<@formGroup labelFor='' labelKey=''>
-							<@select name='id_question_file_name' default_value=(config_producer.idQuestionNameFile?string)!'' items=question_ref_list  />
-						</@formGroup>
-					</#if>
-					<@formGroup labelFor='' labelKey=''>
-						<@radioButton labelFor='type_config_file_name3' labelKey='#i18n{module.forms.documentproducer.modify.producer.config.namefile.text}' name='type_config_file_name' id='type_config_file_name3' value='text' checked=(config_producer.typeConfigFileName == 'text') />
-					</@formGroup>
-					<@formGroup labelFor='' labelKey=''>
-						<@input type='text' maxlength=255 value='${config_producer.textFileName!""}' id='' name='text_file_name' />
-					</@formGroup>
-					<@formGroup labelFor='' labelKey=''>
-						<@checkBox labelFor='extract_filled' labelKey='#i18n{module.forms.documentproducer.modify.producer.config.extract.filled}' name='extract_filled' id='extract_filled' checked=config_producer.extractFilled />
-					</@formGroup>
-				</@boxBody>
-			</@box>
-		</@columns>
-	</@row>
-	<@row>
-		<@columns>
-			<@box>
-				<@boxHeader title='#i18n{module.forms.documentproducer.modify.producer.config.title}'>
-					<@button type='button' id='button_checkbox' class='allunchecked' buttonIcon='square' title='#i18n{module.forms.documentproducer.modify.producer.config.button.allchecked}' hideTitle=['xs','sm'] size='sm' />
-				</@boxHeader>
-				<@boxBody>
-					<@table>
-						<@tr>
-							<@th>#i18n{forms.modify_forms.manage_question.row_title}</@th>
-							<@th>#i18n{forms.modify_forms.manage_question.row_type}</@th>
-							<@th>#i18n{forms.modify_forms.manage_question.row_actions}</@th>
-						</@tr>
-						<@tableHeadBodySeparator />
-						<#if question_list?has_content>
-							<#list question_list as question>
-								<@tr>
-									<@td>
-										<@formLabel labelFor="config_question_${question?index}" class="text-primary" mandatory=false>
-										<#if question.entry.entryType.comment> ${question.comment} <#else> ${question.title} </#if>
-										</@formLabel>
-									</@td>
-									<@td>#i18n{${question.entry.entryType.title}}</@td>
-									<@td>
-										<@checkBox name='config_question' id='config_question_${question?index}' value='${question.id}' checked=(id_question_list?has_content && id_question_list?seq_contains(question.id)) />
-									</@td>
-								</@tr>
-							</#list>
-						</#if>
-					</@table>
-					<@formGroup>
-						<@button type='submit' name='action_modifyConfigProducer' buttonIcon='check' title='#i18n{module.forms.documentproducer.modify.producer.config.button.modify}' />
-						<@button type='submit' name='view_getManageConfigProducer' buttonIcon='times' title='#i18n{module.forms.documentproducer.modify.producer.config.button.cancel}' cancel=true />
-					</@formGroup>
-				</@boxBody>
-			</@box>
-		</@columns>
-	</@row>
-</@tform>
+<#if position_question_form_filename?exists><#assign defaut_question_form_filename=position_question_form_filename></#if>
+<@pageContainer>
+    <@pageColumn>
+		<@pageHeader title='#i18n{module.forms.documentproducer.create.producer.config.title}' />
+			<@tform method='post' action='jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp'>
+			<@messages errors=errors />
+				<@row>
+					<@columns xs=12 md=4>
+						<@box>
+							<@boxHeader title='#i18n{module.forms.documentproducer.modify.producer.config.title}' />
+							<@boxBody>
+							<@formGroup labelFor='title' labelKey='#i18n{module.forms.documentproducer.modify.producer.config.name}' mandatory=true>
+								<@input type='text' maxlength=255 value='${config_producer.name!""}' name='name' />
+							</@formGroup>
+							<@formGroup labelFor='' labelKey='#i18n{module.forms.documentproducer.modify.producer.config.documentType}' mandatory=true>
+								<@select name='type' default_value=default_document_type_ref_list?string items=document_type_ref_list />
+							</@formGroup>
+							<@formGroup labelFor='' labelKey='#i18n{module.forms.documentproducer.modify.producer.config.namefile}' mandatory=true>
+								<@radioButton labelFor='type_config_file_name1' labelKey='#i18n{module.forms.documentproducer.modify.producer.config.namefile.default}' name='type_config_file_name' id='type_config_file_name1' value='default' checked=(config_producer.typeConfigFileName == 'default') />
+							</@formGroup>
+							<#if question_ref_list?exists && question_ref_list?has_content>
+								<@formGroup labelFor='' labelKey=''>
+									<@radioButton labelFor='type_config_file_name2' labelKey='#i18n{module.forms.documentproducer.modify.producer.config.namefile.field}' name='type_config_file_name' id='type_config_file_name2' value='form_question' checked=(config_producer.typeConfigFileName == 'form_question') />
+								</@formGroup>
+								<@formGroup labelFor='' labelKey=''>
+									<@select name='id_question_file_name' default_value=(config_producer.idQuestionNameFile?string)!'' items=question_ref_list  />
+								</@formGroup>
+							</#if>
+							<@formGroup labelFor='' labelKey=''>
+								<@radioButton labelFor='type_config_file_name3' labelKey='#i18n{module.forms.documentproducer.modify.producer.config.namefile.text}' name='type_config_file_name' id='type_config_file_name3' value='text' checked=(config_producer.typeConfigFileName == 'text') />
+							</@formGroup>
+							<@formGroup labelFor='' labelKey=''>
+								<@input type='text' maxlength=255 value='${config_producer.textFileName!""}' id='' name='text_file_name' />
+							</@formGroup>
+							<@formGroup labelFor='' labelKey=''>
+								<@checkBox  orientation='switch' labelFor='extract_filled' labelKey='#i18n{module.forms.documentproducer.modify.producer.config.extract.filled}' name='extract_filled' id='extract_filled' checked=config_producer.extractFilled />
+							</@formGroup>
+						</@boxBody>
+					</@box>
+				</@columns>
+				<@columns xs=12 md=8>
+					<@box>
+						<@boxHeader title='#i18n{module.forms.documentproducer.modify.producer.config.title}'>
+							<@button type='button' id='button_checkbox' class='allchecked' buttonIcon='square' title='#i18n{portal.util.labelUnCheckAll}' hideTitle=['xs','sm'] />
+						</@boxHeader>
+						<@boxBody>
+							<#if question_list?has_content>
+								<@manageFeature id='question_list'>
+									<#list question_list as question>
+									<@manageFeatureItem>
+										<@manageFeatureItemColumn>
+											<#assign questionLabel><#if question.entry.entryType.comment>${question.comment}<#else>${question.title}</#if></#assign>
+											<@checkBox orientation='switch' name='config_question' id='config_question_${question?index}' value='${question.id}' labelKey=questionLabel checked=(id_question_list?has_content && id_question_list?seq_contains(question.id)) />
+										</@manageFeatureItemColumn>
+									</@manageFeatureItem>
+									</#list>
+								</@manageFeature>
+							<#else>
+								<@card>
+									<@empty />	
+								</@card>
+							</#if>
+							</#if>
+							<@formGroup>
+								<@button type='submit' name='action_modifyConfigProducer' buttonIcon='check' title='#i18n{module.forms.documentproducer.modify.producer.config.button.modify}' />
+								<@button type='submit' name='view_getManageConfigProducer' buttonIcon='times' title='#i18n{module.forms.documentproducer.modify.producer.config.button.cancel}' cancel=true />
+							</@formGroup>
+						</@boxBody>
+					</@box>
+				</@columns>
+			</@row>
+		</@tform>
+	</@pageColumn>
+</@pageContainer>
 <script>
-    $(function() {
-        $("#button_checkbox").click( function() {
-			if ($("#button_checkbox").hasClass("allunchecked")) {
-				$("input[name='config_question']").each( function () {
-					 $(this).prop("checked", true);
-				});
-				 $("#button_checkbox").toggleClass("allunchecked").toggleClass("allchecked");
-				 $("#button_checkbox").find("i").toggleClass("fa-square").toggleClass("fa-check-square");
-			}
-			else {
-				$("input[name='config_question']").each( function () {
-					 $(this).prop("checked", false);
-				});
-				 $("#button_checkbox").toggleClass("allchecked").toggleClass("allunchecked");
-				 $("#button_checkbox").find("i").toggleClass("fa-check-square").toggleClass("fa-square");
-			}
-			}
-		);
-    });
+document.addEventListener('DOMContentLoaded', function() {
+	const buttonCheckbox = document.getElementById('button_checkbox');
+	const checkboxes = document.querySelectorAll('input[name="config_question"]');
+	
+	buttonCheckbox.addEventListener('click', function() {
+		const isChecked = buttonCheckbox.classList.contains('allunchecked');
+		
+		checkboxes.forEach(checkbox => {
+			checkbox.checked = isChecked;
+		});
+		
+		buttonCheckbox.classList.toggle('allunchecked');
+		buttonCheckbox.classList.toggle('allchecked');
+		
+		const icon = buttonCheckbox.querySelector('i');
+		icon.classList.toggle('ti-square');
+		icon.classList.toggle('ti-square-check');
+
+		const newTitle = isChecked ? '#i18n{portal.util.labelUnCheckAll}' : '#i18n{portal.util.labelCheckAll}';
+		buttonCheckbox.querySelector('span').textContent = newTitle;
+	});
+});
 </script>
