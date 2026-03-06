@@ -35,9 +35,10 @@ package fr.paris.lutece.plugins.forms.modules.documentproducer.service;
 
 import fr.paris.lutece.plugins.forms.modules.documentproducer.business.listener.FormsDocumentProducerRemovalListener;
 import fr.paris.lutece.plugins.forms.modules.documentproducer.business.listener.QuestionDocumentProducerRemovalListener;
-import fr.paris.lutece.plugins.forms.service.listener.QuestionRemovalListenerService;
-import fr.paris.lutece.plugins.forms.service.listener.FormRemovalListenerService;
 import fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation;
+import fr.paris.lutece.portal.service.util.RemovalListenerService;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * FormsDocumentProducerPlugin
@@ -56,8 +57,8 @@ public class FormsDocumentProducerPlugin extends PluginDefaultImplementation
         FormsDocumentProducerRemovalListener listenerForms = new FormsDocumentProducerRemovalListener( );
         QuestionDocumentProducerRemovalListener listenerQuestion = new QuestionDocumentProducerRemovalListener( );
 
-        FormRemovalListenerService.getService( ).registerListener( listenerForms );
-        QuestionRemovalListenerService.getService( ).registerListener( listenerQuestion );
+        CDI.current( ).select( RemovalListenerService.class, NamedLiteral.of( "forms.formRemovalService" ) ).get( ).registerListener( listenerForms );
+        CDI.current( ).select( RemovalListenerService.class, NamedLiteral.of( "forms.questionRemovalService" ) ).get( ).registerListener( listenerQuestion );
     }
 
 }
