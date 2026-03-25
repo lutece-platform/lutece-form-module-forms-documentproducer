@@ -65,6 +65,7 @@ public class ConfigProducerDAO implements IConfigProducerDAO
     private static final String SQL_QUERY_SAVE_CONFIG_DEFAULT = "INSERT INTO forms_default_config (id_config, id_form, config_type ) VALUES ( ? , ?, ? ) ;";
     private static final String SQL_QUERY_UPDATE_CONFIG_DEFAULT = "UPDATE forms_default_config SET id_config = ? WHERE id_form = ? AND config_type = ? ;";
     private static final String SQL_QUERY_DELETE_CONFIG_DEFAULT_BY_ID_FORM = "DELETE FROM forms_default_config WHERE id_form = ? ;";
+    private static final String SQL_QUERY_DELETE_CONFIG_DEFAULT_BY_ID_CONFIG = "DELETE FROM forms_default_config WHERE id_config = ?;";
 
     /**
      * {@inheritDoc}
@@ -415,6 +416,19 @@ public class ConfigProducerDAO implements IConfigProducerDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_CONFIG_DEFAULT_BY_ID_FORM, plugin ) )
         {
             daoUtil.setInt( 1, nIdForm );
+            daoUtil.executeUpdate( );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeDefaultConfig( Plugin plugin, int nIdConfig )
+    {
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_CONFIG_DEFAULT_BY_ID_CONFIG, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdConfig );
             daoUtil.executeUpdate( );
         }
     }
