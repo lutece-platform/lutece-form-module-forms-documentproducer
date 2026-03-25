@@ -254,4 +254,17 @@ public final class ConfigProducerHome
     {
         _dao.removeAllDefaultConfigOfForm( plugin, nIdForm );
     }
+
+    /**
+     * Remove the default config by given id producer config
+     *
+     * @param plugin
+     *            The plugin
+     * @param nIdConfig
+     *            The id producer config
+     */
+    public static void removeDefaultConfig( Plugin plugin, int nIdConfig )
+    {
+        _dao.removeDefaultConfig( plugin, nIdConfig );
+    }
 }

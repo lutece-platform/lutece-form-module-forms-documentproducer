@@ -201,4 +201,14 @@ public interface IConfigProducerDAO
      *            the id form
      */
     void removeAllDefaultConfigOfForm( Plugin plugin, int nIdForm );
+
+    /**
+     * The method delete all the default config for id config producer
+     *
+     * @param plugin
+     *            the plugin
+     * @param nIdConfig
+     *            the id config producer
+     */
+    void removeDefaultConfig( Plugin plugin, int nIdConfig );
 }

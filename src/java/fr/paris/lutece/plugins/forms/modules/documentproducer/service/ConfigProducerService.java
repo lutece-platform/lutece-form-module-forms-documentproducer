@@ -226,4 +226,17 @@ public class ConfigProducerService
     {
         ConfigProducerHome.removeAllDefaultConfigOfForm( plugin, nIdForm );
     }
+
+    /**
+     * This remove default config
+     *
+     * @param plugin
+     *            plugin
+     * @param nIdConfig
+     *            the id producer config
+     */
+    public void removeDefaultConfig( Plugin plugin, int nIdConfig )
+    {
+        ConfigProducerHome.removeDefaultConfig( plugin, nIdConfig );
+    }
 }

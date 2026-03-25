@@ -296,6 +296,7 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
     {
         String strIdConfigProducer = request.getParameter( PARAMETER_ID_CONFIG_PRODUCER );
 
+        _manageConfigProducerService.removeDefaultConfig( getPlugin( ), Integer.parseInt( strIdConfigProducer ) );
         _manageConfigProducerService.deleteProducerConfig( getPlugin( ), Integer.parseInt( strIdConfigProducer ) );
         addInfo( MESSAGE_DELETED_CONFIG, getLocale( ) );
         return redirectView( request, VIEW_MANAGE_CONFIG_PRODUCER );
@@ -429,7 +430,8 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
             ReferenceList refListDocType = new ReferenceList( );
 
             // Get the defaultConfig for this docType
-            Optional<ConfigProducer> defaultConfigDocType = listDefaultConfig.stream( ).filter( config -> config.getType( ).equals( docType.toString( ) ) )
+            Optional<ConfigProducer> defaultConfigDocType = listDefaultConfig.stream( ).filter(
+                    config -> config.getType( ) != null && config.getType( ).equals( docType.toString( ) ) )
                     .findFirst( );
 
             if ( defaultConfigDocType.isPresent( ) )
