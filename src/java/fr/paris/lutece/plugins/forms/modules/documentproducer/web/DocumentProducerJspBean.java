@@ -49,6 +49,7 @@ import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.modules.documentproducer.business.producerconfig.ConfigProducer;
 import fr.paris.lutece.plugins.forms.modules.documentproducer.business.producerconfig.DocumentType;
@@ -121,6 +122,8 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
     private static final String MESSAGE_SAVE_ADVANCED_PARAM_CONFIG_PRODUCER = "module.forms.documentproducer.message.producer.advancedParam.saved";
     private static final String MESSAGE_CONFIRM_REMOVE_CONFIG_PRODUCER = "module.forms.documentproducer.message.producer.config.confirm.deletion";
     private static final String MESSAGE_MODIFY_CONFIG_PRODUCER = "module.forms.documentproducer.message.producer.config.modified";
+    private static final String MESSAGE_ERROR_FORM_NOT_FOUND = "module.forms.documentproducer.message.error.form.notFound";
+    private static final String MESSAGE_ERROR_CONFIG_NOT_FOUND = "module.forms.documentproducer.message.error.config.notFound";
 
     private static final String MESSAGE_PAGE_TITLE_MANAGE_CONFIG_PRODUCER = "module.forms.documentproducer.message.pageTitleManageConfigProducer";
     private static final String MESSAGE_PAGE_TITLE_CREATE_CONFIG_PRODUCER = "module.forms.documentproducer.message.pageTitleCreateConfigProducer";
@@ -199,7 +202,14 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
         }
         else
         {
-            _form = FormHome.findByPrimaryKey( Integer.parseInt( request.getParameter( PARAMETER_ID_FORM ) ) );
+            Form form = FormHome.findByPrimaryKey( NumberUtils.toInt( strIdForm, NumberUtils.INTEGER_MINUS_ONE ) );
+
+            if ( form == null )
+            {
+                addError( MESSAGE_ERROR_FORM_NOT_FOUND, getLocale( ) );
+                return redirectView( request, VIEW_SELECT_FORM );
+            }
+            _form = form;
         }
 
         _configProducer = new ConfigProducer( );
@@ -283,9 +293,15 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
     public String getConfirmDeleteConfigProducer( HttpServletRequest request ) throws AccessDeniedException
     {
         checkAuthorized( _form );
-        int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_CONFIG_PRODUCER ) );
+        ConfigProducer configProducer = loadConfigOfForm( request );
+
+        if ( configProducer == null )
+        {
+            return redirectView( request, VIEW_MANAGE_CONFIG_PRODUCER );
+        }
+
         UrlItem url = new UrlItem( getActionUrl( ACTION_DELETE_CONFIG_PRODUCER ) );
-        url.addParameter( PARAMETER_ID_CONFIG_PRODUCER, nId );
+        url.addParameter( PARAMETER_ID_CONFIG_PRODUCER, configProducer.getIdProducerConfig( ) );
 
         String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_CONFIG_PRODUCER, null, null, url.getUrl( ), null, 
                 AdminMessage.TYPE_CONFIRMATION, null, JSP_MANAGE_CONFIG_PRODUCER );
@@ -299,13 +315,21 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
      * @param request
      *            request
      * @return a message to confirm and redirect to manage page
+     * @throws AccessDeniedException
+     *             if the user is not authorized on the form
      */
     @Action( value = ACTION_DELETE_CONFIG_PRODUCER )
-    public String doDeleteConfigProducer( HttpServletRequest request )
+    public String doDeleteConfigProducer( HttpServletRequest request ) throws AccessDeniedException
     {
-        String strIdConfigProducer = request.getParameter( PARAMETER_ID_CONFIG_PRODUCER );
+        checkAuthorized( _form );
+        ConfigProducer configProducer = loadConfigOfForm( request );
 
-        _manageConfigProducerService.deleteProducerConfig( getPlugin( ), Integer.parseInt( strIdConfigProducer ) );
+        if ( configProducer == null )
+        {
+            return redirectView( request, VIEW_MANAGE_CONFIG_PRODUCER );
+        }
+
+        _manageConfigProducerService.deleteProducerConfig( getPlugin( ), configProducer.getIdProducerConfig( ) );
         addInfo( MESSAGE_DELETED_CONFIG, getLocale( ) );
         return redirectView( request, VIEW_MANAGE_CONFIG_PRODUCER );
     }
@@ -321,7 +345,13 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
     public String getModifyConfigProducer( HttpServletRequest request ) throws AccessDeniedException
     {
         checkAuthorized( _form );
-        _configProducer = _manageConfigProducerService.loadConfig( getPlugin( ), Integer.parseInt( request.getParameter( PARAMETER_ID_CONFIG_PRODUCER ) ) );
+        ConfigProducer configProducer = loadConfigOfForm( request );
+
+        if ( configProducer == null )
+        {
+            return redirectView( request, VIEW_MANAGE_CONFIG_PRODUCER );
+        }
+        _configProducer = configProducer;
 
         Map<String, Object> model = getModel( );
 
@@ -378,9 +408,12 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
     public String doCopyConfigProducer( HttpServletRequest request ) throws AccessDeniedException
     {
         checkAuthorized( _form );
+        ConfigProducer configProducer = loadConfigOfForm( request );
 
-        String strIdConfigProducer = request.getParameter( PARAMETER_ID_CONFIG_PRODUCER );
-        _manageConfigProducerService.copyProducerConfig( getPlugin( ), Integer.parseInt( strIdConfigProducer ), request.getLocale( ) );
+        if ( configProducer != null )
+        {
+            _manageConfigProducerService.copyProducerConfig( getPlugin( ), configProducer.getIdProducerConfig( ), request.getLocale( ) );
+        }
 
         return redirectView( request, VIEW_MANAGE_CONFIG_PRODUCER );
     }
@@ -478,12 +511,17 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
         // First remove all default config for the form
         _manageConfigProducerService.removeAllDefaultConfigByIdForm( getPlugin( ), _form.getId( ) );
 
+        List<ConfigProducer> listConfigProducer = _manageConfigProducerService.loadListProducerConfig( getPlugin( ), _form.getId( ) );
+
         for ( DocumentType docType : DocumentType.values( ) )
         {
-            String strIdConfigDefault = request.getParameter( docType.toString( ) );
-            if ( strIdConfigDefault != null )
+            int nIdConfigDefault = NumberUtils.toInt( request.getParameter( docType.toString( ) ), NumberUtils.INTEGER_MINUS_ONE );
+
+            // Only a configuration of this form and of this document type can be its default one
+            if ( listConfigProducer.stream( ).anyMatch(
+                    config -> config.getIdProducerConfig( ) == nIdConfigDefault && docType.toString( ).equals( config.getType( ) ) ) )
             {
-                _manageConfigProducerService.createDefaultConfig( getPlugin( ), _form.getId( ), Integer.parseInt( strIdConfigDefault ), docType );
+                _manageConfigProducerService.createDefaultConfig( getPlugin( ), _form.getId( ), nIdConfigDefault, docType );
             }
         }
 
@@ -523,17 +561,40 @@ public class DocumentProducerJspBean extends MVCAdminJspBean
     /**
      * Check if the user is authorized (has the permission 'MANAGE_DOCUMENTPRODUCER')
      * 
-     * @param strIdResource
-     *            the id resource
-     * @return true if the user has the permission, false otherwise
+     * @param form
+     *            the form, null if no form has been selected in this session
+     * @throws AccessDeniedException
+     *             if there is no form or if the user does not have the permission on it
      */
     private void checkAuthorized( Form form ) throws AccessDeniedException
     {
-        if ( !StringUtils.isNotBlank( String.valueOf( form.getId( ) ) ) || !RBACService.isAuthorized( Form.RESOURCE_TYPE, String.valueOf( form.getId( ) ),
+        if ( form == null || !RBACService.isAuthorized( Form.RESOURCE_TYPE, String.valueOf( form.getId( ) ),
                 FormsDocumentProducerResourceIdService.PERMISSION_MANAGE_DOCUMENTPRODUCER, (User) getUser( ) ) )
         {
             throw new AccessDeniedException( "Unauthorized" );
         }
+    }
+
+    /**
+     * Load the configuration given by the request parameter, if it belongs to the form of the session. Otherwise an error is added.
+     * 
+     * @param request
+     *            the request
+     * @return the configuration, or null if the parameter is not a configuration of the form
+     */
+    private ConfigProducer loadConfigOfForm( HttpServletRequest request )
+    {
+        int nIdConfigProducer = NumberUtils.toInt( request.getParameter( PARAMETER_ID_CONFIG_PRODUCER ), NumberUtils.INTEGER_MINUS_ONE );
+        ConfigProducer configProducer = ( nIdConfigProducer > 0 ) ? _manageConfigProducerService.loadConfig( getPlugin( ), nIdConfigProducer ) : null;
+
+        // The DAO returns an empty configuration when the id is unknown
+        if ( configProducer == null || configProducer.getIdProducerConfig( ) != nIdConfigProducer || configProducer.getIdForm( ) != _form.getId( ) )
+        {
+            addError( MESSAGE_ERROR_CONFIG_NOT_FOUND, getLocale( ) );
+            return null;
+        }
+
+        return configProducer;
     }
 
     private List<Question> getTextAndNumQuestion( List<Question> listQuestion )

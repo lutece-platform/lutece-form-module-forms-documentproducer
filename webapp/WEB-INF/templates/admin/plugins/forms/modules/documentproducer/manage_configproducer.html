@@ -6,6 +6,7 @@
 				<@button type='submit' name='view_createConfigProducer' buttonIcon='plus me-1' title='#i18n{module.forms.documentproducer.manage.producer.config.button.create}' hideTitle=['xs','sm'] />
 			</@tform>
 		</@pageHeader>
+		<@messages errors=errors />
 		<#if config_list?has_content>
 			<@manageFeature id='results_list'>
 			<#list config_list as config>

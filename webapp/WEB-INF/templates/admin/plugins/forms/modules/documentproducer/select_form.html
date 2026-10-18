@@ -1,6 +1,7 @@
 <@pageContainer>
     <@pageColumn>
 		<@pageHeader title='#i18n{module.forms.documentproducer.select.form.config.export.title}' class='col-md-12' />
+		<@messages errors=errors />
 		<#if form_ref_list?exists && form_ref_list?has_content >
 			<@tform method='post' action='jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp' boxed=true>
 				<@formGroup labelFor='id_form' labelKey='#i18n{module.forms.documentproducer.select.form.label}' mandatory=true>
